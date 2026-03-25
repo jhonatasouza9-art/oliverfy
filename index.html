@@ -768,19 +768,22 @@
   }
 
   async function fetchCsv(url) {
-    const proxies = [
-      `https://corsproxy.io/?${encodeURIComponent(url)}`,
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-    ];
-    for (const p of proxies) {
-      try {
-        const res = await fetch(p);
-        if (!res.ok) continue;
+    // Direct fetch — works for Apps Script URLs (they set CORS headers)
+    try {
+      const res = await fetch(url, { redirect: 'follow' });
+      if (res.ok) {
         const text = await res.text();
-        if (text && text.trim().length > 10 && !text.trim().startsWith('<')) return text;
-      } catch(e) { continue; }
-    }
+        if (text && text.trim().length > 5 && !text.trim().startsWith('<')) return text;
+      }
+    } catch(e) {}
+    // Fallback proxy for Google Sheets pub CSV links
+    try {
+      const res = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.trim().length > 5 && !text.trim().startsWith('<')) return text;
+      }
+    } catch(e) {}
     throw new Error('Falha ao carregar');
   }
 
@@ -796,9 +799,9 @@
       return;
     }
 
-    // Ensure the URL is a CSV pub link
+    // If it is an Apps Script URL, use it directly; otherwise build CSV export URL
     let finalUrl = url;
-    if (url.includes('docs.google.com') && !url.includes('output=csv')) {
+    if (url.includes('docs.google.com') && !url.includes('output=csv') && !url.includes('script.google.com')) {
       const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
       const gidMatch = url.match(/gid=(\d+)/);
       if (idMatch) {
