@@ -767,9 +767,30 @@
     render();
   }
 
+  function buildProxyUrl(url) {
+    // Use allorigins proxy to bypass CORS restrictions from Google Sheets
+    return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+  }
+
+  async function fetchCsv(url) {
+    // Try direct first, fallback to proxy
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.length > 10) return text;
+      }
+    } catch(e) {}
+    // Fallback: proxy
+    const res = await fetch(buildProxyUrl(url));
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.text();
+  }
+
   async function connectSheet() {
     const url = document.getElementById('sheetUrl').value.trim();
     const err = document.getElementById('errorMsg');
+    const btn = document.querySelector('.btn-primary');
     err.style.display = 'none';
 
     if (!url) {
@@ -778,6 +799,7 @@
       return;
     }
 
+    // Ensure the URL is a CSV pub link
     let finalUrl = url;
     if (url.includes('docs.google.com') && !url.includes('output=csv')) {
       const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
@@ -789,18 +811,21 @@
 
     csvUrl = finalUrl;
     isDemo = false;
+    btn.textContent = 'Carregando...';
+    btn.disabled = true;
 
     try {
-      const res = await fetch(finalUrl);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
+      const text = await fetchCsv(finalUrl);
       const rows = parseCSV(text);
       if (!rows.length) throw new Error('Sem dados');
       showDashboard(rows);
       try { localStorage.setItem('oliverfy_sheet', finalUrl); } catch(e){}
     } catch(e) {
-      err.textContent = 'Não foi possível carregar a planilha. Verifique se ela está publicada como CSV: Arquivo → Publicar na web → selecione a aba → formato CSV → Publicar.';
+      err.textContent = 'Não foi possível carregar a planilha. Confirme que ela está publicada como CSV: Arquivo → Publicar na web → selecione a aba → formato CSV → Publicar.';
       err.style.display = 'block';
+    } finally {
+      btn.textContent = 'Conectar';
+      btn.disabled = false;
     }
   }
 
@@ -820,8 +845,7 @@
   async function refreshData() {
     if (isDemo || !csvUrl) { render(); return; }
     try {
-      const res = await fetch(csvUrl + '&t=' + Date.now());
-      const text = await res.text();
+      const text = await fetchCsv(csvUrl + '&t=' + Date.now());
       allData = parseCSV(text);
       render();
     } catch(e) {
