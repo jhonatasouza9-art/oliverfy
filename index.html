@@ -748,14 +748,58 @@
     });
   }
 
+  function parseCSVLine(line) {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  }
+
+  function cleanValue(v) {
+    if (!v) return '0';
+    // Remove R$, $, spaces, then normalize comma decimals
+    let s = v.replace(/R\$|\$/g, '').trim();
+    // If has comma and no dot → treat comma as decimal separator
+    if (s.includes(',') && !s.includes('.')) s = s.replace(',', '.');
+    // If has both dot (thousands) and comma (decimal) like 1.000,50
+    else if (s.includes('.') && s.includes(',')) s = s.replace('.','').replace(',','.');
+    // Remove any remaining non-numeric except dot and minus
+    s = s.replace(/[^0-9.-]/g, '');
+    return s || '0';
+  }
+
   function parseCSV(text) {
     const lines = text.trim().split('\n');
     const rows = [];
-    lines.forEach((line, i) => {
-      const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g,''));
-      if (i === 0 && isNaN(parseFloat(cols[1]?.replace(',','.')))) return; // skip header
-      if (cols.length >= 4 && cols[0] && cols[1]) rows.push(cols);
-    });
+    let headerSkipped = false;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const cols = parseCSVLine(line);
+      // Remove leading empty columns
+      while (cols.length > 0 && cols[0] === '') cols.shift();
+      if (cols.length < 2) continue;
+      // Detect and skip header row
+      const firstLower = (cols[0] || '').toLowerCase();
+      if (!headerSkipped && (firstLower === 'data' || firstLower === 'date' || isNaN(parseFloat(cleanValue(cols[1]))))) {
+        headerSkipped = true;
+        continue;
+      }
+      // cols: [Data, Valor, Categoria, Descrição]
+      const data = cols[0] || '';
+      const valor = cleanValue(cols[1]);
+      const categoria = (cols[2] || 'Outros').trim();
+      const descricao = (cols[3] || categoria).trim();
+      if (data && parseFloat(valor) > 0) {
+        rows.push([data, valor, categoria, descricao]);
+      }
+    }
     return rows;
   }
 
