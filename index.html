@@ -52,8 +52,8 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── SETUP SCREEN ── */
-    .setup-wrap {
+    /* ── LOGIN SCREEN ── */
+    .login-wrap {
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -61,120 +61,83 @@
       padding: 2rem 1rem;
       background: var(--bg);
     }
-
-    .setup-box {
-      width: 100%;
-      max-width: 480px;
+    .login-box { width: 100%; max-width: 380px; }
+    .login-logo {
+      font-size: 28px; font-weight: 500;
+      color: var(--text); margin-bottom: 2rem;
+      letter-spacing: -0.5px; text-align: center;
     }
-
-    .setup-logo {
-      font-size: 28px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 2rem;
-      letter-spacing: -0.5px;
-    }
-    .setup-logo em { color: var(--green); font-style: normal; }
-
-    .setup-card {
+    .login-logo em { color: var(--green); font-style: normal; }
+    .login-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 1.75rem;
-      margin-bottom: 12px;
       box-shadow: var(--shadow);
     }
-
-    .setup-card h2 {
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 6px;
+    .login-card h2 {
+      font-size: 16px; font-weight: 500;
+      color: var(--text); margin-bottom: 1.5rem; text-align: center;
     }
-
-    .setup-card p {
-      font-size: 13px;
-      color: var(--text2);
-      line-height: 1.6;
-      margin-bottom: 1.25rem;
-    }
-
-    .steps-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
-    .step-row { display: flex; gap: 10px; align-items: flex-start; }
-    .step-badge {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: var(--green-light); color: var(--green-dark);
-      font-size: 11px; font-weight: 500;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 1px;
-    }
-    .step-row span {
-      font-size: 13px; color: var(--text2); line-height: 1.55;
-    }
-    .step-row code {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 1px 6px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--text);
-    }
-
-    .input-group { display: flex; gap: 8px; }
-    .input-group input {
-      flex: 1;
-      height: 40px;
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field label { font-size: 12px; font-weight: 500; color: var(--text2); }
+    .field input {
+      height: 42px;
       border: 1px solid var(--border2);
       border-radius: var(--radius);
       padding: 0 12px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--text);
-      background: var(--surface);
-      outline: none;
+      font-size: 14px; color: var(--text);
+      background: var(--surface); outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus { border-color: var(--green); }
+    .field input::placeholder { color: var(--text3); }
+    .btn-login {
+      width: 100%; height: 42px;
+      background: var(--green); color: white;
+      border: none; border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; margin-top: 6px;
+      transition: background 0.15s;
+    }
+    .btn-login:hover { background: var(--green-dark); }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+    .login-error {
+      font-size: 12px; color: var(--red-dark);
+      margin-top: 10px; text-align: center; display: none;
+    }
+    .user-name-badge {
+      font-size: 13px; font-weight: 500; color: var(--text2);
+    }
+
+    .input-group { display: flex; gap: 8px; }
+    .input-group input {
+      flex: 1; height: 40px;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius); padding: 0 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; color: var(--text);
+      background: var(--surface); outline: none;
       transition: border-color 0.15s;
     }
     .input-group input:focus { border-color: var(--green); }
     .input-group input::placeholder { color: var(--text3); }
-
     .btn-primary {
-      height: 40px;
-      padding: 0 18px;
-      background: var(--green);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
+      height: 40px; padding: 0 18px;
+      background: var(--green); color: white;
+      border: none; border-radius: var(--radius);
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; white-space: nowrap;
       transition: background 0.15s;
     }
     .btn-primary:hover { background: var(--green-dark); }
-
     .error-msg {
-      font-size: 12px;
-      color: var(--red-dark);
-      margin-top: 8px;
-      display: none;
-      line-height: 1.5;
+      font-size: 12px; color: var(--red-dark);
+      margin-top: 8px; display: none; line-height: 1.5;
     }
-
-    .btn-demo {
-      width: 100%;
-      height: 42px;
-      background: transparent;
-      border: 1px solid var(--border2);
-      border-radius: var(--radius);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--text2);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .btn-demo:hover { background: var(--surface); color: var(--text); }
 
     /* ── DASHBOARD ── */
     .app { display: none; flex-direction: column; min-height: 100vh; }
@@ -384,42 +347,23 @@
 </head>
 <body>
 
-<!-- ── SETUP ── -->
-<div class="setup-wrap" id="setupWrap">
-  <div class="setup-box">
-    <div class="setup-logo">Oliver<em>fy</em></div>
-
-    <div class="setup-card">
-      <h2>Conectar sua planilha</h2>
-      <p>Siga os passos abaixo para vincular sua planilha do Google Sheets ao dashboard.</p>
-
-      <div class="steps-list">
-        <div class="step-row">
-          <div class="step-badge">1</div>
-          <span>Abra sua planilha e vá em <strong>Arquivo → Compartilhar → Publicar na web</strong></span>
-        </div>
-        <div class="step-row">
-          <div class="step-badge">2</div>
-          <span>Selecione a aba com as transações, escolha o formato <code>CSV</code> e clique em <strong>Publicar</strong></span>
-        </div>
-        <div class="step-row">
-          <div class="step-badge">3</div>
-          <span>Sua planilha deve ter as colunas nessa ordem: <code>Data</code> <code>Valor</code> <code>Categoria</code> <code>Descrição</code></span>
-        </div>
-        <div class="step-row">
-          <div class="step-badge">4</div>
-          <span>Cole o link gerado abaixo e clique em Conectar</span>
-        </div>
+<!-- ── LOGIN ── -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">Oliver<em>fy</em></div>
+    <div class="login-card">
+      <h2>Entrar na sua conta</h2>
+      <div class="field">
+        <label>Usuário</label>
+        <input type="text" id="loginUser" placeholder="seu usuário" autocomplete="username" />
       </div>
-
-      <div class="input-group">
-        <input type="text" id="sheetUrl" placeholder="Cole o link da planilha aqui..." />
-        <button class="btn-primary" onclick="connectSheet()">Conectar</button>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="loginPass" placeholder="sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
       </div>
-      <div class="error-msg" id="errorMsg"></div>
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">Entrar</button>
+      <div class="login-error" id="loginError">Usuário ou senha incorretos.</div>
     </div>
-
-    <button class="btn-demo" onclick="loadDemo()">Ver com dados de exemplo →</button>
   </div>
 </div>
 
@@ -435,7 +379,8 @@
       </div>
       <button class="btn-refresh" onclick="refreshData()">↻ Atualizar</button>
       <div class="bot-badge"><div class="bot-dot"></div>Planilha conectada</div>
-      <button class="btn-disconnect" onclick="disconnect()" title="Desconectar">✕</button>
+      <span class="user-name-badge" id="userNameBadge"></span>
+      <button class="btn-disconnect" onclick="doLogout()" title="Sair">Sair</button>
     </div>
   </header>
 
@@ -510,6 +455,27 @@
 </div>
 
 <script>
+  // ─────────────────────────────────────────
+  // USUÁRIOS — edite aqui para adicionar/remover
+  // Formato: { user, pass, name, sheetUrl }
+  // sheetUrl = link do Google Apps Script de cada usuário
+  const USERS = [
+    {
+      user: 'jhonatas',
+      pass: '1234',
+      name: 'Jhonatas',
+      sheetUrl: 'https://script.google.com/macros/s/AKfycby8iwcP-Ip-t_P4ziGjZ-GcA0S8POxBktZM6G8VQ9CRXMcH3Kjjyq90aJnE2ll4pkKmcg/exec'
+    },
+    // Para adicionar outro usuário, copie o bloco acima e altere os dados:
+    // {
+    //   user: 'maria',
+    //   pass: 'senha123',
+    //   name: 'Maria',
+    //   sheetUrl: 'https://script.google.com/macros/s/SEU_LINK_AQUI/exec'
+    // },
+  ];
+  // ─────────────────────────────────────────
+
   const COLORS = ['#1D9E75','#378ADD','#EF9F27','#E24B4A','#7F77DD','#D85A30','#D4537E','#639922'];
   const BG_MAP = {
     'alimentação':'#E1F5EE','comida':'#E1F5EE','mercado':'#E1F5EE','ifood':'#E1F5EE','restaurante':'#E1F5EE','padaria':'#E1F5EE',
@@ -533,6 +499,7 @@
   let period = 'mes';
   let csvUrl = '';
   let isDemo = false;
+  let currentUser = null;
 
   const DEMO = [
     ['01/03/2025','127.50','Alimentação','Mercado Extra'],
@@ -812,23 +779,23 @@
 
   function showDashboard(data) {
     allData = data;
-    document.getElementById('setupWrap').style.display = 'none';
-    const app = document.getElementById('app');
-    app.style.display = 'flex';
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    const badge = document.getElementById('userNameBadge');
+    if (badge && currentUser) badge.textContent = currentUser.name;
     render();
   }
 
   async function fetchCsv(url) {
     const attempts = [
       () => fetch(url, { redirect: 'follow', mode: 'cors' }),
-      () => fetch(url, { redirect: 'follow', mode: 'no-cors' }).then(r => { if(r.type==='opaque') throw new Error('opaque'); return r; }),
       () => fetch('https://corsproxy.io/?' + encodeURIComponent(url)),
       () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url)),
     ];
     for (const attempt of attempts) {
       try {
         const res = await attempt();
-        if (!res.ok && res.type !== 'opaque') continue;
+        if (!res.ok) continue;
         const text = await res.text();
         const clean = text.trim();
         if (clean.length > 5 && !clean.startsWith('<') && !clean.startsWith('{')) return text;
@@ -837,52 +804,54 @@
     throw new Error('Falha ao carregar');
   }
 
-  async function connectSheet() {
-    const url = document.getElementById('sheetUrl').value.trim();
-    const err = document.getElementById('errorMsg');
-    const btn = document.querySelector('.btn-primary');
-    err.style.display = 'none';
-
-    if (!url) {
-      err.textContent = 'Por favor, cole o link da planilha.';
-      err.style.display = 'block';
-      return;
-    }
-
-    // If it is an Apps Script URL, use it directly; otherwise build CSV export URL
-    let finalUrl = url;
-    if (url.includes('docs.google.com') && !url.includes('output=csv') && !url.includes('script.google.com')) {
-      const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-      const gidMatch = url.match(/gid=(\d+)/);
-      if (idMatch) {
-        finalUrl = `https://docs.google.com/spreadsheets/d/${idMatch[1]}/export?format=csv${gidMatch ? '&gid='+gidMatch[1] : ''}`;
-      }
-    }
-
-    csvUrl = finalUrl;
+  async function loadUserSheet(user) {
+    currentUser = user;
+    csvUrl = user.sheetUrl;
     isDemo = false;
-    btn.textContent = 'Carregando...';
-    btn.disabled = true;
-
     try {
-      const text = await fetchCsv(finalUrl);
+      const text = await fetchCsv(user.sheetUrl);
       const rows = parseCSV(text);
-      if (!rows.length) throw new Error('Sem dados');
+      if (!rows.length) throw new Error('Sem dados na planilha');
       showDashboard(rows);
-      try { localStorage.setItem('oliverfy_sheet', finalUrl); } catch(e){}
+      try { localStorage.setItem('oliverfy_session', user.user); } catch(e){}
     } catch(e) {
-      err.textContent = 'Erro ao carregar: ' + (e.message || 'verifique o link e tente novamente.');
+      const err = document.getElementById('loginError');
+      err.textContent = 'Erro ao carregar planilha: ' + (e.message || 'tente novamente');
       err.style.display = 'block';
-    } finally {
-      btn.textContent = 'Conectar';
+      const btn = document.getElementById('loginBtn');
       btn.disabled = false;
+      btn.textContent = 'Entrar';
     }
   }
 
-  function loadDemo() {
-    isDemo = true;
+  function doLogin() {
+    const user = document.getElementById('loginUser').value.trim().toLowerCase();
+    const pass = document.getElementById('loginPass').value;
+    const err = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    err.style.display = 'none';
+    const found = USERS.find(u => u.user.toLowerCase() === user && u.pass === pass);
+    if (!found) {
+      err.textContent = 'Usuário ou senha incorretos.';
+      err.style.display = 'block';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Carregando...';
+    loadUserSheet(found);
+  }
+
+  function doLogout() {
+    currentUser = null;
+    allData = [];
     csvUrl = '';
-    showDashboard(DEMO);
+    document.getElementById('loginWrap').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginBtn').disabled = false;
+    document.getElementById('loginBtn').textContent = 'Entrar';
+    try { localStorage.removeItem('oliverfy_session'); } catch(e){}
   }
 
   function setPeriod(p, btn) {
@@ -893,29 +862,27 @@
   }
 
   async function refreshData() {
-    if (isDemo || !csvUrl) { render(); return; }
+    if (!csvUrl) return;
     try {
       const text = await fetchCsv(csvUrl + '&t=' + Date.now());
       allData = parseCSV(text);
       render();
-    } catch(e) {
-      console.warn('Falha ao atualizar:', e);
-    }
+    } catch(e) { console.warn('Falha ao atualizar:', e); }
   }
 
-  function disconnect() {
-    document.getElementById('setupWrap').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
-    document.getElementById('sheetUrl').value = '';
-    allData = [];
-    try { localStorage.removeItem('oliverfy_sheet'); } catch(e){}
-  }
-
-  // auto-connect from saved URL
+  // auto-login from saved session
   window.addEventListener('DOMContentLoaded', () => {
     try {
-      const saved = localStorage.getItem('oliverfy_sheet');
-      if (saved) document.getElementById('sheetUrl').value = saved;
+      const saved = localStorage.getItem('oliverfy_session');
+      if (saved) {
+        const found = USERS.find(u => u.user === saved);
+        if (found) {
+          const btn = document.getElementById('loginBtn');
+          btn.disabled = true;
+          btn.textContent = 'Carregando...';
+          loadUserSheet(found);
+        }
+      }
     } catch(e){}
   });
 </script>
