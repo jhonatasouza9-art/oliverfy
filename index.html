@@ -570,7 +570,7 @@
 
   function parseVal(s) {
     if (!s) return 0;
-    return parseFloat(s.toString().replace(/[R$\s.]/g,'').replace(',','.')) || 0;
+    return parseFloat(s.toString().trim()) || 0;
   }
 
   function fmt(n) {
