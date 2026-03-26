@@ -763,13 +763,23 @@
 
   function cleanValue(v) {
     if (!v) return '0';
-    // Remove R$, $, spaces, then normalize comma decimals
+    // Remove currency symbols and spaces
     let s = v.replace(/R\$|\$/g, '').trim();
-    // If has comma and no dot → treat comma as decimal separator
-    if (s.includes(',') && !s.includes('.')) s = s.replace(',', '.');
-    // If has both dot (thousands) and comma (decimal) like 1.000,50
-    else if (s.includes('.') && s.includes(',')) s = s.replace('.','').replace(',','.');
-    // Remove any remaining non-numeric except dot and minus
+    // Count dots and commas
+    const dots = (s.match(/\./g) || []).length;
+    const commas = (s.match(/,/g) || []).length;
+    if (dots === 1 && commas === 0) {
+      // already decimal with dot: 127.50
+    } else if (commas === 1 && dots === 0) {
+      // comma is decimal separator: 127,50 → 127.50
+      s = s.replace(',', '.');
+    } else if (commas === 1 && dots === 1) {
+      // 1.000,50 → thousands dot, decimal comma
+      s = s.replace('.', '').replace(',', '.');
+    } else {
+      // fallback: remove everything except digits and last separator
+      s = s.replace(/[^0-9,.-]/g, '').replace(',', '.');
+    }
     s = s.replace(/[^0-9.-]/g, '');
     return s || '0';
   }
