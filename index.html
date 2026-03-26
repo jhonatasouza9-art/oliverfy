@@ -763,23 +763,21 @@
 
   function cleanValue(v) {
     if (!v) return '0';
-    // Remove currency symbols, R$, $, spaces
-    let s = v.replace(/R\$|\$/g, '').trim();
-    // Remove all spaces
-    s = s.replace(/\s/g, '');
-    // Pattern: ends with comma + 2 digits = decimal comma (77,00 or 1.234,56)
+    // Strip everything except digits, comma, dot, minus
+    let s = v.replace(/[^0-9,.-]/g, '').trim();
+    if (!s) return '0';
+    // Ends with comma + exactly 2 digits → comma is decimal: 77,00 → 77.00
     if (/,\d{2}$/.test(s)) {
       s = s.replace(/\./g, '').replace(',', '.');
     }
-    // Pattern: ends with dot + 2 digits = decimal dot (77.00 or 1,234.56)
+    // Ends with dot + exactly 2 digits → dot is decimal: 77.00 stays
     else if (/\.\d{2}$/.test(s)) {
       s = s.replace(/,/g, '');
     }
-    // No separator or integer
+    // Integer or unknown — strip separators
     else {
-      s = s.replace(/[,.']/g, '');
+      s = s.replace(/[,.]/g, '');
     }
-    s = s.replace(/[^0-9.-]/g, '');
     return s || '0';
   }
 
