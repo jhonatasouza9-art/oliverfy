@@ -246,6 +246,110 @@
     }
     .btn-disconnect:hover { color: var(--text2); }
 
+    /* ── NAV TABS ── */
+    .nav-tabs {
+      display: flex; gap: 2px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+    }
+    .nav-tab {
+      padding: 12px 18px;
+      font-size: 13px; font-weight: 500;
+      color: var(--text2);
+      border: none; background: transparent;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+    /* ── REGISTROS PAGE ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .reg-filters {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 1.25rem; flex-wrap: wrap;
+    }
+    .reg-filters input[type=date], .reg-filters select {
+      height: 36px;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 0 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; color: var(--text);
+      background: var(--surface); outline: none;
+      cursor: pointer;
+    }
+    .reg-filters input[type=date]:focus,
+    .reg-filters select:focus { border-color: var(--green); }
+    .btn-clear {
+      height: 36px; padding: 0 14px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; color: var(--text2);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-clear:hover { background: var(--surface2); }
+    .reg-summary {
+      display: flex; gap: 12px; margin-bottom: 1.25rem; flex-wrap: wrap;
+    }
+    .reg-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-size: 13px; color: var(--text2);
+    }
+    .reg-stat strong { color: var(--text); font-weight: 500; }
+    .reg-table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .reg-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px;
+    }
+    .reg-table th {
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--text3);
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer; user-select: none;
+      white-space: nowrap;
+    }
+    .reg-table th:hover { color: var(--text2); }
+    .reg-table th.sorted { color: var(--green); }
+    .reg-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .reg-table tr:last-child td { border-bottom: none; }
+    .reg-table tr:hover td { background: var(--surface2); }
+    .reg-amt-neg { color: var(--red-dark); font-weight: 500; }
+    .reg-amt-pos { color: var(--green-dark); font-weight: 500; }
+    .reg-badge {
+      display: inline-block;
+      padding: 2px 8px; border-radius: 20px;
+      font-size: 11px; font-weight: 500;
+    }
+    .reg-badge-exp { background: var(--red-light); color: var(--red-dark); }
+    .reg-badge-inc { background: var(--green-light); color: var(--green-dark); }
+    .reg-empty { text-align: center; padding: 3rem; color: var(--text3); font-size: 13px; }
+
     .content { padding: 1.5rem; max-width: 1280px; margin: 0 auto; width: 100%; }
 
     /* cards */
@@ -394,11 +498,6 @@
   <header class="topbar">
     <div class="top-logo">Oliver<em>fy</em></div>
     <div class="topbar-right">
-      <div class="period-sel">
-        <button class="period-btn active" onclick="setPeriod('mes',this)">Este mês</button>
-        <button class="period-btn" onclick="setPeriod('3meses',this)">3 meses</button>
-        <button class="period-btn" onclick="setPeriod('tudo',this)">Tudo</button>
-      </div>
       <button class="btn-refresh" onclick="refreshData()">↻ Atualizar</button>
       <div class="bot-badge"><div class="bot-dot"></div>Planilha conectada</div>
       <span class="user-name-badge" id="userNameBadge"></span>
@@ -406,7 +505,21 @@
     </div>
   </header>
 
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPage('dashboard',this)">Dashboard</button>
+    <button class="nav-tab" onclick="switchPage('registros',this)">Registros</button>
+  </nav>
+
+  <!-- PAGE: DASHBOARD -->
+  <div class="page active" id="page-dashboard">
   <main class="content">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+      <div class="period-sel">
+        <button class="period-btn active" onclick="setPeriod('mes',this)">Este mês</button>
+        <button class="period-btn" onclick="setPeriod('3meses',this)">3 meses</button>
+        <button class="period-btn" onclick="setPeriod('tudo',this)">Tudo</button>
+      </div>
+    </div>
     <!-- metric cards -->
     <div class="cards-grid" style="grid-template-columns:repeat(5,minmax(0,1fr))">
       <div class="metric-card">
@@ -480,6 +593,43 @@
       </div>
     </div>
   </main>
+  </div><!-- end page-dashboard -->
+
+  <!-- PAGE: REGISTROS -->
+  <div class="page" id="page-registros">
+  <main class="content">
+    <div class="reg-filters">
+      <input type="date" id="regDateFrom" onchange="renderRegistros()" title="De" />
+      <span style="font-size:13px;color:var(--text3)">até</span>
+      <input type="date" id="regDateTo" onchange="renderRegistros()" title="Até" />
+      <select id="regType" onchange="renderRegistros()">
+        <option value="todos">Todos</option>
+        <option value="gastos">Gastos</option>
+        <option value="receitas">Receitas</option>
+      </select>
+      <select id="regCat" onchange="renderRegistros()">
+        <option value="">Todas as categorias</option>
+      </select>
+      <button class="btn-clear" onclick="clearRegFilters()">Limpar filtros</button>
+    </div>
+    <div class="reg-summary" id="regSummary"></div>
+    <div class="reg-table-wrap">
+      <table class="reg-table">
+        <thead>
+          <tr>
+            <th onclick="sortReg('data')" id="th-data">Data ↕</th>
+            <th onclick="sortReg('desc')">Descrição</th>
+            <th onclick="sortReg('cat')">Categoria</th>
+            <th onclick="sortReg('tipo')">Tipo</th>
+            <th onclick="sortReg('valor')" id="th-valor">Valor ↕</th>
+          </tr>
+        </thead>
+        <tbody id="regBody"></tbody>
+      </table>
+    </div>
+  </main>
+  </div><!-- end page-registros -->
+
 </div>
 
 <script>
@@ -930,6 +1080,96 @@
     document.getElementById('loginBtn').disabled = false;
     document.getElementById('loginBtn').textContent = 'Entrar';
     try { localStorage.removeItem('oliverfy_session'); } catch(e){}
+  }
+
+  function switchPage(name, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'registros') renderRegistros();
+  }
+
+  // ── REGISTROS ──
+  let regSort = { col: 'data', asc: false };
+
+  function clearRegFilters() {
+    document.getElementById('regDateFrom').value = '';
+    document.getElementById('regDateTo').value = '';
+    document.getElementById('regType').value = 'todos';
+    document.getElementById('regCat').value = '';
+    renderRegistros();
+  }
+
+  function sortReg(col) {
+    if (regSort.col === col) regSort.asc = !regSort.asc;
+    else { regSort.col = col; regSort.asc = col === 'data' ? false : true; }
+    renderRegistros();
+  }
+
+  function renderRegistros() {
+    const dateFrom = document.getElementById('regDateFrom').value;
+    const dateTo   = document.getElementById('regDateTo').value;
+    const type     = document.getElementById('regType').value;
+    const catFilter = document.getElementById('regCat').value;
+
+    // Build combined list
+    const gastos   = allData.map(r => ({date:r[0], desc:r[3]||r[2], cat:r[2]||'Outros', val:parseVal(r[1]), tipo:'gasto'}));
+    const receitas = incomeData.map(r => ({date:r[0], desc:r[3]||'Receita', cat:'Receita', val:parseVal(r[1]), tipo:'receita'}));
+    let rows = type === 'gastos' ? gastos : type === 'receitas' ? receitas : [...gastos, ...receitas];
+
+    // Date filter
+    if (dateFrom) rows = rows.filter(r => { const d = parseDate(r.date); return d && d >= new Date(dateFrom + 'T00:00:00'); });
+    if (dateTo)   rows = rows.filter(r => { const d = parseDate(r.date); return d && d <= new Date(dateTo + 'T23:59:59'); });
+
+    // Category filter
+    if (catFilter) rows = rows.filter(r => r.cat === catFilter);
+
+    // Sort
+    rows.sort((a, b) => {
+      let va, vb;
+      if (regSort.col === 'data')  { va = parseDate(a.date)||0; vb = parseDate(b.date)||0; }
+      else if (regSort.col === 'valor') { va = a.val; vb = b.val; }
+      else if (regSort.col === 'cat')   { va = a.cat; vb = b.cat; }
+      else if (regSort.col === 'tipo')  { va = a.tipo; vb = b.tipo; }
+      else { va = (a.desc||'').toLowerCase(); vb = (b.desc||'').toLowerCase(); }
+      if (va < vb) return regSort.asc ? -1 : 1;
+      if (va > vb) return regSort.asc ? 1 : -1;
+      return 0;
+    });
+
+    // Update category select
+    const cats = [...new Set(allData.map(r => r[2]||'Outros').filter(Boolean))].sort();
+    const catSel = document.getElementById('regCat');
+    const curCat = catSel.value;
+    catSel.innerHTML = '<option value="">Todas as categorias</option>';
+    cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; catSel.appendChild(o); });
+    catSel.value = curCat;
+
+    // Summary
+    const totalGastos   = rows.filter(r => r.tipo==='gasto').reduce((s,r) => s+r.val, 0);
+    const totalReceitas = rows.filter(r => r.tipo==='receita').reduce((s,r) => s+r.val, 0);
+    document.getElementById('regSummary').innerHTML = `
+      <div class="reg-stat">${rows.length} registros</div>
+      <div class="reg-stat">Gastos: <strong>${fmt(totalGastos)}</strong></div>
+      <div class="reg-stat">Receitas: <strong>${fmt(totalReceitas)}</strong></div>
+      <div class="reg-stat">Saldo: <strong style="color:${totalReceitas-totalGastos>=0?'var(--green-dark)':'var(--red-dark)'}">${fmt(totalReceitas-totalGastos)}</strong></div>
+    `;
+
+    // Table body
+    const tbody = document.getElementById('regBody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="reg-empty">Nenhum registro encontrado</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r.date}</td>
+        <td>${r.desc}</td>
+        <td>${r.cat}</td>
+        <td><span class="reg-badge ${r.tipo==='gasto'?'reg-badge-exp':'reg-badge-inc'}">${r.tipo==='gasto'?'Gasto':'Receita'}</span></td>
+        <td class="${r.tipo==='gasto'?'reg-amt-neg':'reg-amt-pos'}">${r.tipo==='gasto'?'-':'+'} ${fmt(r.val)}</td>
+      </tr>`).join('');
   }
 
   function setPeriod(p, btn) {
