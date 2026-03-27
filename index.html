@@ -331,13 +331,16 @@
     .loading { text-align: center; padding: 3rem; color: var(--text2); font-size: 14px; }
 
     /* responsive */
+    @media (max-width: 1100px) {
+      .cards-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+    }
     @media (max-width: 900px) {
-      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
       .mid-grid { grid-template-columns: 1fr; }
       .bottom-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
-      .cards-grid { grid-template-columns: 1fr 1fr; }
+      .cards-grid { grid-template-columns: 1fr 1fr !important; }
       .content { padding: 1rem; }
       .topbar { padding: 0 1rem; }
       .period-sel { display: none; }
@@ -386,27 +389,33 @@
 
   <main class="content">
     <!-- metric cards -->
-    <div class="cards-grid">
+    <div class="cards-grid" style="grid-template-columns:repeat(5,minmax(0,1fr))">
+      <div class="metric-card">
+        <div class="accent" style="background:var(--green)"></div>
+        <div class="metric-label">Receitas</div>
+        <div class="metric-val" id="mReceitas">—</div>
+        <div class="metric-sub" id="mReceitasSub"></div>
+      </div>
       <div class="metric-card">
         <div class="accent" style="background:var(--red)"></div>
-        <div class="metric-label">Total gasto</div>
+        <div class="metric-label">Gastos</div>
         <div class="metric-val" id="mTotal">—</div>
         <div class="metric-sub" id="mTotalSub"></div>
       </div>
       <div class="metric-card">
         <div class="accent" style="background:var(--blue)"></div>
+        <div class="metric-label">Saldo do mês</div>
+        <div class="metric-val" id="mSaldo">—</div>
+        <div class="metric-sub" id="mSaldoSub"></div>
+      </div>
+      <div class="metric-card">
+        <div class="accent" style="background:var(--amber)"></div>
         <div class="metric-label">Transações</div>
         <div class="metric-val" id="mTx">—</div>
         <div class="metric-sub" id="mTxSub"></div>
       </div>
       <div class="metric-card">
-        <div class="accent" style="background:var(--amber)"></div>
-        <div class="metric-label">Média por transação</div>
-        <div class="metric-val" id="mMedia">—</div>
-        <div class="metric-sub" id="mMediaSub"></div>
-      </div>
-      <div class="metric-card">
-        <div class="accent" style="background:var(--green)"></div>
+        <div class="accent" style="background:var(--purple)"></div>
         <div class="metric-label">Maior categoria</div>
         <div class="metric-val" id="mCat" style="font-size:15px;padding-top:5px">—</div>
         <div class="metric-sub" id="mCatSub"></div>
@@ -457,21 +466,23 @@
 <script>
   // ─────────────────────────────────────────
   // USUÁRIOS — edite aqui para adicionar/remover
-  // Formato: { user, pass, name, sheetUrl }
-  // sheetUrl = link do Google Apps Script de cada usuário
+  // sheetUrl    = Apps Script da aba de GASTOS
+  // incomeUrl   = Apps Script da aba de RECEITAS (Data, Valor, Descrição)
   const USERS = [
     {
       user: 'Oliveira',
       pass: 'Fontenele',
       name: 'Financeiro Jow e Carol',
-      sheetUrl: 'https://script.google.com/macros/s/AKfycby8iwcP-Ip-t_P4ziGjZ-GcA0S8POxBktZM6G8VQ9CRXMcH3Kjjyq90aJnE2ll4pkKmcg/exec'
+      sheetUrl: 'https://script.google.com/macros/s/AKfycby8iwcP-Ip-t_P4ziGjZ-GcA0S8POxBktZM6G8VQ9CRXMcH3Kjjyq90aJnE2ll4pkKmcg/exec',
+      incomeUrl: 'COLE_AQUI_O_LINK_DO_APPS_SCRIPT_DE_RECEITAS'
     },
-    // Para adicionar outro usuário, copie o bloco acima e altere os dados:
+    // Para adicionar outro usuário:
     // {
     //   user: 'maria',
     //   pass: 'senha123',
     //   name: 'Maria',
-    //   sheetUrl: 'https://script.google.com/macros/s/SEU_LINK_AQUI/exec'
+    //   sheetUrl: 'LINK_GASTOS',
+    //   incomeUrl: 'LINK_RECEITAS'
     // },
   ];
   // ─────────────────────────────────────────
@@ -496,8 +507,10 @@
   };
 
   let allData = [];
+  let incomeData = [];
   let period = 'mes';
   let csvUrl = '';
+  let incomeUrl = '';
   let isDemo = false;
   let currentUser = null;
 
@@ -570,19 +583,46 @@
     return '#F1EFE8';
   }
 
+  function filterIncome() {
+    const now = new Date();
+    return incomeData.filter(r => {
+      const d = parseDate(r[0]);
+      if (!d) return true;
+      if (period === 'mes') return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+      if (period === '3meses') {
+        const diff = (now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth());
+        return diff >= 0 && diff < 3;
+      }
+      return true;
+    });
+  }
+
   function render() {
     const data = filterData();
+    const incData = filterIncome();
     const total = data.reduce((s,r) => s + parseVal(r[1]), 0);
-    const media = data.length ? total / data.length : 0;
+    const totalReceitas = incData.reduce((s,r) => s + parseVal(r[1]), 0);
+    const saldo = totalReceitas - total;
 
     const periodLabel = period === 'mes' ? 'neste mês' : period === '3meses' ? 'últimos 3 meses' : 'período completo';
 
+    // receitas
+    document.getElementById('mReceitas').textContent = fmt(totalReceitas);
+    document.getElementById('mReceitasSub').textContent = incData.length + ' entrada' + (incData.length !== 1 ? 's' : '');
+
+    // gastos
     document.getElementById('mTotal').textContent = fmt(total);
     document.getElementById('mTotalSub').textContent = periodLabel;
+
+    // saldo
+    const saldoEl = document.getElementById('mSaldo');
+    saldoEl.textContent = fmt(Math.abs(saldo));
+    saldoEl.className = 'metric-val ' + (saldo >= 0 ? 'up' : 'down');
+    document.getElementById('mSaldoSub').textContent = saldo >= 0 ? 'no positivo ✓' : 'no negativo';
+
+    // transações
     document.getElementById('mTx').textContent = data.length;
-    document.getElementById('mTxSub').textContent = 'registros encontrados';
-    document.getElementById('mMedia').textContent = fmt(media);
-    document.getElementById('mMediaSub').textContent = 'por lançamento';
+    document.getElementById('mTxSub').textContent = 'gastos registrados';
 
     // categories
     const cats = {};
@@ -778,7 +818,7 @@
   }
 
   function showDashboard(data) {
-    allData = data;
+    if (data) allData = data;
     document.getElementById('loginWrap').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     const badge = document.getElementById('userNameBadge');
@@ -804,14 +844,40 @@
     throw new Error('Falha ao carregar');
   }
 
+  function parseIncomeCSV(text) {
+    const lines = text.trim().split('\n');
+    const rows = [];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const cols = parseCSVLine(line);
+      while (cols.length > 0 && cols[0] === '') cols.shift();
+      if (cols.length < 2) continue;
+      const firstLower = (cols[0] || '').toLowerCase();
+      if (firstLower === 'data' || firstLower === 'date') continue;
+      const data = cols[0] || '';
+      const valor = cleanValue(cols[1]);
+      const descricao = (cols[2] || 'Receita').trim();
+      if (data && parseFloat(valor) > 0) rows.push([data, valor, 'Receita', descricao]);
+    }
+    return rows;
+  }
+
   async function loadUserSheet(user) {
     currentUser = user;
     csvUrl = user.sheetUrl;
+    incomeUrl = user.incomeUrl || '';
     isDemo = false;
     try {
-      const text = await fetchCsv(user.sheetUrl);
-      const rows = parseCSV(text);
-      if (!rows.length) throw new Error('Sem dados na planilha');
+      // Load gastos and receitas in parallel
+      const [expText, incText] = await Promise.all([
+        fetchCsv(user.sheetUrl),
+        (incomeUrl && !incomeUrl.includes('COLE_AQUI')) ? fetchCsv(incomeUrl).catch(() => '') : Promise.resolve('')
+      ]);
+      const rows = parseCSV(expText);
+      if (!rows.length) throw new Error('Sem dados na planilha de gastos');
+      allData = rows;
+      incomeData = incText ? parseIncomeCSV(incText) : [];
       showDashboard(rows);
       try { localStorage.setItem('oliverfy_session', user.user); } catch(e){}
     } catch(e) {
@@ -844,7 +910,9 @@
   function doLogout() {
     currentUser = null;
     allData = [];
+    incomeData = [];
     csvUrl = '';
+    incomeUrl = '';
     document.getElementById('loginWrap').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     document.getElementById('loginUser').value = '';
@@ -864,8 +932,13 @@
   async function refreshData() {
     if (!csvUrl) return;
     try {
-      const text = await fetchCsv(csvUrl + '&t=' + Date.now());
-      allData = parseCSV(text);
+      const t = '&t=' + Date.now();
+      const [expText, incText] = await Promise.all([
+        fetchCsv(csvUrl + t),
+        (incomeUrl && !incomeUrl.includes('COLE_AQUI')) ? fetchCsv(incomeUrl + t).catch(() => '') : Promise.resolve('')
+      ]);
+      allData = parseCSV(expText);
+      incomeData = incText ? parseIncomeCSV(incText) : [];
       render();
     } catch(e) { console.warn('Falha ao atualizar:', e); }
   }
