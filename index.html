@@ -8,73 +8,70 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --green:       #1D9E75;
+      --green: #1D9E75;
       --green-light: #E1F5EE;
-      --green-dark:  #0F6E56;
-      --green-deep:  #085041;
-      --bg:          #F5F4F0;
-      --surface:     #FFFFFF;
-      --surface2:    #F8F7F4;
-      --border:      rgba(0,0,0,0.08);
-      --border2:     rgba(0,0,0,0.13);
-      --text:        #1A1A18;
-      --text2:       #5F5E5A;
-      --text3:       #9A9892;
-      --red:         #E24B4A;
-      --red-light:   #FCEBEB;
-      --radius:      10px;
-      --radius-lg:   16px;
-      --shadow:      0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-lg:   0 10px 30px rgba(0,0,0,0.08), 0 3px 8px rgba(0,0,0,0.04);
+      --green-dark: #0F6E56;
+      --green-deep: #085041;
+      --bg: #F5F4F0;
+      --surface: #FFFFFF;
+      --surface2: #F8F7F4;
+      --border: rgba(0,0,0,0.08);
+      --border2: rgba(0,0,0,0.13);
+      --text: #1A1A18;
+      --text2: #5F5E5A;
+      --text3: #9A9892;
+      --red: #E24B4A;
+      --red-light: #FCEBEB;
+      --orange: #D85A30;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.08), 0 3px 8px rgba(0,0,0,0.04);
     }
-
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg:       #0F0F0E;
-        --surface:  #1A1A18;
+        --bg: #0F0F0E;
+        --surface: #1A1A18;
         --surface2: #222220;
-        --border:   rgba(255,255,255,0.07);
-        --border2:  rgba(255,255,255,0.12);
-        --text:     #F0EFE8;
-        --text2:    #A8A69E;
-        --text3:    #6A6860;
-        --shadow:   0 1px 3px rgba(0,0,0,0.3);
+        --border: rgba(255,255,255,0.07);
+        --border2: rgba(255,255,255,0.12);
+        --text: #F0EFE8;
+        --text2: #A8A69E;
+        --text3: #6A6860;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3);
         --shadow-lg: 0 20px 40px rgba(0,0,0,0.4);
         --green-light: #0D3D2A;
-        --red-light:   #2D1414;
+        --red-light: #2D1414;
       }
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      line-height: 1.5;
-    }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; line-height: 1.5; }
 
+    /* HIDE / SHOW SCREENS */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* LANDING */
     .nav { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
-    .logo { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+    .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
     .logo em { color: var(--green); font-style: normal; }
-
+    .nav-login { font-size: 14px; color: var(--text2); cursor: pointer; padding: 8px 14px; border-radius: var(--radius); transition: background 0.15s; }
+    .nav-login:hover { background: var(--surface2); }
     .hero { max-width: 1100px; margin: 0 auto; padding: 3rem 1.5rem 4rem; text-align: center; }
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: var(--green-light); color: var(--green-dark); border-radius: 100px; font-size: 13px; font-weight: 500; margin-bottom: 1.5rem; }
-    .hero h1 { font-size: clamp(34px, 6vw, 56px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 1.25rem; color: var(--text); }
+    .hero h1 { font-size: clamp(34px, 6vw, 56px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 1.25rem; }
     .hero h1 em { color: var(--green); font-style: normal; }
-    .hero p { font-size: 17px; color: var(--text2); max-width: 580px; margin: 0 auto 2.5rem; line-height: 1.6; }
-    .hero-cta { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--green); color: white; border: none; border-radius: var(--radius); font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 0.15s, transform 0.1s; box-shadow: var(--shadow); }
+    .hero p { font-size: 17px; color: var(--text2); max-width: 580px; margin: 0 auto 2.5rem; }
+    .hero-cta { display: inline-flex; gap: 8px; padding: 14px 28px; background: var(--green); color: white; border: none; border-radius: var(--radius); font: 500 15px 'DM Sans'; cursor: pointer; text-decoration: none; transition: background 0.15s; }
     .hero-cta:hover { background: var(--green-dark); }
-    .hero-cta:active { transform: scale(0.98); }
-
     .plans { max-width: 900px; margin: 0 auto; padding: 0 1.5rem 4rem; }
     .plans h2 { text-align: center; font-size: 28px; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
     .plans-sub { text-align: center; color: var(--text2); margin-bottom: 2.5rem; }
     .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
-    .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem 1.75rem; box-shadow: var(--shadow); transition: transform 0.15s, box-shadow 0.15s; }
+    .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem 1.75rem; box-shadow: var(--shadow); transition: transform 0.15s; }
     .plan:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
     .plan.featured { border-color: var(--green); border-width: 2px; position: relative; }
     .plan-tag { position: absolute; top: -12px; right: 1.5rem; background: var(--green); color: white; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 100px; }
@@ -84,57 +81,109 @@
     .plan-price .value { font-size: 42px; font-weight: 700; letter-spacing: -1.5px; }
     .plan-price .period { font-size: 14px; color: var(--text2); }
     .plan-features { list-style: none; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 10px; }
-    .plan-features li { font-size: 14px; color: var(--text); display: flex; align-items: flex-start; gap: 10px; line-height: 1.45; }
-    .plan-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-    .plan-btn { width: 100%; padding: 12px; background: var(--green); color: white; border: none; border-radius: var(--radius); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+    .plan-features li { font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+    .plan-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .plan-btn { width: 100%; padding: 12px; background: var(--green); color: white; border: none; border-radius: var(--radius); font: 500 14px 'DM Sans'; cursor: pointer; transition: background 0.15s; }
     .plan-btn:hover { background: var(--green-dark); }
     .plan:not(.featured) .plan-btn { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
-    .plan:not(.featured) .plan-btn:hover { background: var(--bg); }
-
     .how { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem 4rem; }
     .how h2 { text-align: center; font-size: 28px; font-weight: 600; margin-bottom: 2.5rem; letter-spacing: -0.5px; }
     .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
     .how-item { text-align: center; padding: 1.5rem; }
     .how-number { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); font-weight: 700; font-size: 18px; margin-bottom: 1rem; }
     .how-item h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.5rem; }
-    .how-item p { font-size: 14px; color: var(--text2); line-height: 1.55; }
-
+    .how-item p { font-size: 14px; color: var(--text2); }
     .footer { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 3rem; text-align: center; color: var(--text3); font-size: 13px; border-top: 1px solid var(--border); }
 
+    /* MODAL */
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100; }
     .modal-bg.open { display: flex; }
     .modal { background: var(--surface); border-radius: var(--radius-lg); width: 100%; max-width: 440px; padding: 2rem; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; position: relative; }
     .modal h2 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; letter-spacing: -0.5px; }
     .modal-sub { color: var(--text2); font-size: 14px; margin-bottom: 1.5rem; }
-    .modal-plan-info { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--green-light); border-radius: var(--radius); margin-bottom: 1.25rem; font-size: 14px; }
+    .modal-plan-info { display: flex; justify-content: space-between; padding: 12px 14px; background: var(--green-light); border-radius: var(--radius); margin-bottom: 1.25rem; font-size: 14px; }
     .modal-plan-info .label { color: var(--green-dark); font-weight: 500; }
     .modal-plan-info .price { font-weight: 700; color: var(--green-deep); }
     .field { margin-bottom: 1rem; }
-    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
-    .field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border2); border-radius: var(--radius); font-family: inherit; font-size: 14px; background: var(--surface); color: var(--text); transition: border-color 0.15s; }
+    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border2); border-radius: var(--radius); font: 14px 'DM Sans'; background: var(--surface); color: var(--text); }
     .field input:focus { outline: none; border-color: var(--green); }
-    .modal-btn { width: 100%; padding: 13px; background: var(--green); color: white; border: none; border-radius: var(--radius); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 0.5rem; transition: background 0.15s; }
+    .field-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+    .modal-btn { width: 100%; padding: 13px; background: var(--green); color: white; border: none; border-radius: var(--radius); font: 500 14px 'DM Sans'; cursor: pointer; margin-top: 0.5rem; transition: background 0.15s; }
     .modal-btn:hover { background: var(--green-dark); }
     .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .modal-close { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--text3); width: 32px; height: 32px; border-radius: 50%; transition: background 0.15s; }
+    .modal-btn.secondary { background: transparent; color: var(--green); margin-top: 0.75rem; padding: 8px; font-size: 13px; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--text3); width: 32px; height: 32px; border-radius: 50%; }
     .modal-close:hover { background: var(--surface2); }
     .error-msg { background: var(--red-light); color: var(--red); padding: 10px 14px; border-radius: var(--radius); font-size: 13px; margin-bottom: 1rem; display: none; }
     .error-msg.show { display: block; }
     .loading-msg { text-align: center; padding: 2rem 1rem; color: var(--text2); display: none; }
     .spinner { width: 32px; height: 32px; border: 3px solid var(--border2); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* DASHBOARD */
+    .dash { display: none; min-height: 100vh; }
+    .dash.active { display: block; }
+    .dash-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .dash-user { display: flex; align-items: center; gap: 10px; }
+    .dash-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; }
+    .dash-user-info { font-size: 13px; }
+    .dash-user-info strong { display: block; font-weight: 500; font-size: 14px; }
+    .dash-user-info span { color: var(--text2); }
+    .dash-logout { background: transparent; border: none; color: var(--text2); font: 13px 'DM Sans'; cursor: pointer; padding: 6px 12px; border-radius: var(--radius); }
+    .dash-logout:hover { background: var(--surface2); }
+    .dash-content { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+    .dash-tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .dash-tab { padding: 10px 16px; font: 500 14px 'DM Sans'; color: var(--text2); border: none; background: transparent; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; }
+    .dash-tab.active { color: var(--green); border-bottom-color: var(--green); }
+    .dash-filter-row { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .dash-filter-btn { padding: 7px 14px; font-size: 12px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text2); cursor: pointer; font-family: 'DM Sans'; transition: all 0.15s; }
+    .dash-filter-btn.active { background: var(--green); color: white; border-color: var(--green); }
+    .dash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+    .dash-card { background: var(--surface); border-radius: var(--radius); padding: 1.25rem; border: 1px solid var(--border); }
+    .dash-card-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+    .dash-card-value { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; }
+    .dash-card-value.green { color: var(--green); }
+    .dash-card-value.red { color: var(--orange); }
+    .dash-card-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+    .dash-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+    @media (max-width: 768px) { .dash-row { grid-template-columns: 1fr; } }
+    .dash-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; }
+    .dash-box-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+    .dash-cat { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; border-bottom: 1px solid var(--border); gap: 12px; }
+    .dash-cat:last-child { border-bottom: none; }
+    .dash-cat-bar { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; min-width: 60px; }
+    .dash-cat-bar-fill { height: 100%; background: var(--green); border-radius: 3px; }
+    .dash-cat-name { min-width: 80px; }
+    .dash-cat-value { font-weight: 500; min-width: 70px; text-align: right; }
+    .dash-empty { text-align: center; color: var(--text3); padding: 2rem 1rem; font-size: 14px; }
+    .dash-table { width: 100%; font-size: 13px; }
+    .dash-table th { text-align: left; padding: 10px 8px; color: var(--text2); font-size: 11px; text-transform: uppercase; font-weight: 500; border-bottom: 1px solid var(--border); letter-spacing: 0.5px; }
+    .dash-table td { padding: 12px 8px; border-bottom: 1px solid var(--border); }
+    .dash-table tr:hover { background: var(--surface2); }
+    .amount-out { color: var(--orange); font-weight: 500; }
+    .amount-in { color: var(--green); font-weight: 500; }
+    .chart-wrap { position: relative; height: 220px; }
+    .list-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .list-item:last-child { border-bottom: none; }
+    .list-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--border2); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .list-check.checked { background: var(--green); border-color: var(--green); color: white; font-size: 12px; }
+    .list-text { flex: 1; font-size: 14px; }
+    .list-text.checked { text-decoration: line-through; color: var(--text3); }
+    .list-qty { font-size: 12px; color: var(--text2); }
   </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════════ LANDING ═══════════════════════════════ -->
+<div class="screen active" id="landing">
   <nav class="nav">
     <div class="logo">Oliver<em>fy</em></div>
+    <div class="nav-login" onclick="abrirLogin()">Entrar →</div>
   </nav>
 
   <section class="hero">
-    <div class="hero-badge">
-      <span>💬</span> Suas finanças no WhatsApp
-    </div>
+    <div class="hero-badge"><span>💬</span> Suas finanças no WhatsApp</div>
     <h1>Controle suas finanças<br>com uma <em>mensagem</em>.</h1>
     <p>Anote gastos, rendas e listas de compras conversando no WhatsApp. Sem planilhas complicadas, sem apps pesados. Tudo organizado pra você.</p>
     <a href="#planos" class="hero-cta">Começar agora →</a>
@@ -143,21 +192,9 @@
   <section class="how">
     <h2>Como funciona</h2>
     <div class="how-grid">
-      <div class="how-item">
-        <div class="how-number">1</div>
-        <h3>Você se cadastra</h3>
-        <p>Escolhe o plano, paga com cartão e pronto. Em segundos seu acesso está ativo.</p>
-      </div>
-      <div class="how-item">
-        <div class="how-number">2</div>
-        <h3>Conversa pelo WhatsApp</h3>
-        <p>"Gastei 50 no mercado", "Recebi 3000 de salário". Simples assim.</p>
-      </div>
-      <div class="how-item">
-        <div class="how-number">3</div>
-        <h3>Acompanha o resumo</h3>
-        <p>Veja seus gastos, rendas e categorias direto no nosso dashboard online.</p>
-      </div>
+      <div class="how-item"><div class="how-number">1</div><h3>Você se cadastra</h3><p>Escolhe o plano, paga com cartão e pronto. Em segundos seu acesso está ativo.</p></div>
+      <div class="how-item"><div class="how-number">2</div><h3>Conversa pelo WhatsApp</h3><p>"Gastei 50 no mercado", "Recebi 3000 de salário". Simples assim.</p></div>
+      <div class="how-item"><div class="how-number">3</div><h3>Acompanha tudo aqui</h3><p>Dashboard completo com gráficos, categorias e lista de compras.</p></div>
     </div>
   </section>
 
@@ -167,28 +204,19 @@
     <div class="plans-grid">
       <div class="plan">
         <div class="plan-name">Básico</div>
-        <div class="plan-price">
-          <span class="currency">R$</span>
-          <span class="value">19</span>
-          <span class="period">/mês</span>
-        </div>
+        <div class="plan-price"><span class="currency">R$</span><span class="value">19</span><span class="period">/mês</span></div>
         <ul class="plan-features">
           <li>Registro de gastos pelo WhatsApp</li>
           <li>Registro de rendas</li>
-          <li>Dashboard de visualização</li>
+          <li>Dashboard com gráficos</li>
           <li>Categorização automática</li>
         </ul>
         <button class="plan-btn" onclick="abrirCadastro('Básico', 19)">Assinar Básico</button>
       </div>
-
       <div class="plan featured">
         <span class="plan-tag">Mais popular</span>
         <div class="plan-name">Pro</div>
-        <div class="plan-price">
-          <span class="currency">R$</span>
-          <span class="value">39</span>
-          <span class="period">/mês</span>
-        </div>
+        <div class="plan-price"><span class="currency">R$</span><span class="value">39</span><span class="period">/mês</span></div>
         <ul class="plan-features">
           <li>Tudo do Básico</li>
           <li>Lista de compras inteligente</li>
@@ -201,137 +229,537 @@
     </div>
   </section>
 
-  <footer class="footer">
-    © 2026 Oliverfy. Feito com 💚 no Brasil.
-  </footer>
+  <footer class="footer">© 2026 Oliverfy. Feito com 💚 no Brasil.</footer>
+</div>
 
-  <div class="modal-bg" id="modalCadastro">
-    <div class="modal">
-      <button class="modal-close" onclick="fecharCadastro()">×</button>
-      <h2>Quase lá!</h2>
-      <p class="modal-sub">Preencha seus dados para continuar</p>
+<!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════════ -->
+<div class="dash" id="dashboard">
+  <nav class="dash-nav">
+    <div class="logo">Oliver<em>fy</em></div>
+    <div class="dash-user">
+      <div class="dash-avatar" id="userAvatar">?</div>
+      <div class="dash-user-info">
+        <strong id="userName">Carregando...</strong>
+        <span id="userPlan"></span>
+      </div>
+      <button class="dash-logout" onclick="logout()">Sair</button>
+    </div>
+  </nav>
 
-      <div class="modal-plan-info" id="planInfo">
-        <span class="label">Plano selecionado</span>
-        <span class="price" id="planPrice">—</span>
+  <div class="dash-content">
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="trocaTab('visao')" data-tab="visao">Visão geral</button>
+      <button class="dash-tab" onclick="trocaTab('transacoes')" data-tab="transacoes">Transações</button>
+      <button class="dash-tab" onclick="trocaTab('lista')" data-tab="lista" id="tabLista">Lista de compras</button>
+    </div>
+
+    <div class="dash-filter-row" id="filterRow">
+      <button class="dash-filter-btn" onclick="setPeriodo('hoje')">Hoje</button>
+      <button class="dash-filter-btn" onclick="setPeriodo('semana')">Semana</button>
+      <button class="dash-filter-btn active" onclick="setPeriodo('mes')">Este mês</button>
+      <button class="dash-filter-btn" onclick="setPeriodo('mes_passado')">Mês passado</button>
+      <button class="dash-filter-btn" onclick="setPeriodo('tudo')">Tudo</button>
+    </div>
+
+    <!-- VISÃO GERAL -->
+    <div id="tabVisao">
+      <div class="dash-cards">
+        <div class="dash-card">
+          <div class="dash-card-label">Receitas</div>
+          <div class="dash-card-value green" id="cardReceitas">R$ 0</div>
+          <div class="dash-card-sub" id="cardReceitasSub">0 entradas</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-label">Despesas</div>
+          <div class="dash-card-value red" id="cardDespesas">R$ 0</div>
+          <div class="dash-card-sub" id="cardDespesasSub">0 gastos</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-label">Saldo</div>
+          <div class="dash-card-value" id="cardSaldo">R$ 0</div>
+          <div class="dash-card-sub">disponível</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-label">Maior gasto</div>
+          <div class="dash-card-value" id="cardMaior">R$ 0</div>
+          <div class="dash-card-sub" id="cardMaiorSub">—</div>
+        </div>
       </div>
 
-      <div class="error-msg" id="errorMsg"></div>
-
-      <div class="loading-msg" id="loadingMsg">
-        <div class="spinner"></div>
-        <p>Criando seu pagamento...</p>
+      <div class="dash-row">
+        <div class="dash-box">
+          <div class="dash-box-title">Gastos por categoria</div>
+          <div id="categorias"></div>
+        </div>
+        <div class="dash-box">
+          <div class="dash-box-title">Evolução dos gastos</div>
+          <div class="chart-wrap"><canvas id="chartGastos"></canvas></div>
+        </div>
       </div>
+    </div>
 
-      <form id="formCadastro" onsubmit="enviarCadastro(event)">
-        <div class="field">
-          <label>Nome completo</label>
-          <input type="text" id="cadNome" required placeholder="Seu nome" autocomplete="name" />
-        </div>
-        <div class="field">
-          <label>E-mail</label>
-          <input type="email" id="cadEmail" required placeholder="seu@email.com" autocomplete="email" />
-        </div>
-        <div class="field">
-          <label>WhatsApp (com DDD)</label>
-          <input type="tel" id="cadWhatsapp" required placeholder="21999999999" autocomplete="tel" />
-        </div>
-        <button type="submit" class="modal-btn" id="btnSubmit">Continuar para pagamento →</button>
-      </form>
+    <!-- TRANSAÇÕES -->
+    <div id="tabTransacoes" style="display:none">
+      <div class="dash-box">
+        <div class="dash-box-title">Histórico</div>
+        <div id="transacoesContent"></div>
+      </div>
+    </div>
+
+    <!-- LISTA -->
+    <div id="tabLista" style="display:none">
+      <div class="dash-box">
+        <div class="dash-box-title">Minha lista de compras</div>
+        <div id="listaContent"></div>
+      </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // ─────────────────────────────────────────
-    // URL do webhook de cadastro no n8n
-    const N8N_WEBHOOK = 'https://chirpingotter-n8n.cloudfy.live/webhook/oliverfy-cadastro';
-    // ─────────────────────────────────────────
+<!-- ═══════════════════════════════ MODAL CADASTRO ═══════════════════════════════ -->
+<div class="modal-bg" id="modalCadastro">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharCadastro()">×</button>
+    <h2>Quase lá!</h2>
+    <p class="modal-sub">Preencha seus dados para continuar</p>
+    <div class="modal-plan-info"><span class="label">Plano selecionado</span><span class="price" id="planPrice">—</span></div>
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="loading-msg" id="loadingMsg"><div class="spinner"></div><p>Criando seu pagamento...</p></div>
+    <form id="formCadastro" onsubmit="enviarCadastro(event)">
+      <div class="field"><label>Nome completo</label><input type="text" id="cadNome" required placeholder="Seu nome" autocomplete="name" /></div>
+      <div class="field"><label>E-mail</label><input type="email" id="cadEmail" required placeholder="seu@email.com" autocomplete="email" /></div>
+      <div class="field"><label>WhatsApp (com DDD)</label><input type="tel" id="cadWhatsapp" required placeholder="21999999999" autocomplete="tel" /></div>
+      <div class="field"><label>Senha</label><input type="password" id="cadSenha" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password" /><div class="field-hint">Você vai usar essa senha para acessar o dashboard</div></div>
+      <button type="submit" class="modal-btn">Continuar para pagamento →</button>
+    </form>
+  </div>
+</div>
 
-    let planoSelecionado = null;
-    let valorSelecionado = null;
+<!-- ═══════════════════════════════ MODAL LOGIN ═══════════════════════════════ -->
+<div class="modal-bg" id="modalLogin">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharLogin()">×</button>
+    <h2>Entrar</h2>
+    <p class="modal-sub">Acesse seu dashboard</p>
+    <div class="error-msg" id="loginError"></div>
+    <div class="loading-msg" id="loginLoading"><div class="spinner"></div><p>Entrando...</p></div>
+    <form id="formLogin" onsubmit="fazerLogin(event)">
+      <div class="field"><label>E-mail</label><input type="email" id="loginEmail" required autocomplete="email" /></div>
+      <div class="field"><label>Senha</label><input type="password" id="loginSenha" required autocomplete="current-password" /></div>
+      <button type="submit" class="modal-btn">Entrar →</button>
+    </form>
+  </div>
+</div>
 
-    function abrirCadastro(plano, valor) {
-      planoSelecionado = plano;
-      valorSelecionado = valor;
-      document.getElementById('planPrice').textContent = `${plano} — R$ ${valor}/mês`;
-      document.getElementById('modalCadastro').classList.add('open');
-      document.getElementById('errorMsg').classList.remove('show');
-      document.getElementById('loadingMsg').style.display = 'none';
-      document.getElementById('formCadastro').style.display = 'block';
-      document.getElementById('planInfo').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// CONFIGURAÇÃO
+// ═══════════════════════════════════════════════════════════════════
+const N8N_BASE = 'https://chirpingotter-n8n.cloudfy.live';
+const URL_CADASTRO  = `${N8N_BASE}/webhook/oliverfy-cadastro`;
+const URL_LOGIN     = `${N8N_BASE}/webhook/oliverfy-login`;
+const URL_DADOS     = `${N8N_BASE}/webhook/oliverfy-dados`;
+const URL_TOGGLE    = `${N8N_BASE}/webhook/oliverfy-lista-toggle`;
 
-    function fecharCadastro() {
-      document.getElementById('modalCadastro').classList.remove('open');
-      document.body.style.overflow = '';
-    }
+let planoSelecionado = null;
+let valorSelecionado = null;
+let usuarioLogado = null;
+let dadosCache = null;
+let periodoAtual = 'mes';
+let abaAtual = 'visao';
+let chartInstance = null;
 
-    function mostrarErro(msg) {
-      const err = document.getElementById('errorMsg');
-      err.textContent = msg;
-      err.classList.add('show');
-    }
+// ═══════════════════════════════════════════════════════════════════
+// CRIPTOGRAFIA (SHA-256)
+// ═══════════════════════════════════════════════════════════════════
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-    async function enviarCadastro(event) {
-      event.preventDefault();
-      document.getElementById('errorMsg').classList.remove('show');
+// ═══════════════════════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════════════════════════════
+function abrirCadastro(plano, valor) {
+  planoSelecionado = plano;
+  valorSelecionado = valor;
+  document.getElementById('planPrice').textContent = `${plano} — R$ ${valor}/mês`;
+  document.getElementById('modalCadastro').classList.add('open');
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('formCadastro').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function fecharCadastro() {
+  document.getElementById('modalCadastro').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function abrirLogin() {
+  document.getElementById('modalLogin').classList.add('open');
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('loginLoading').style.display = 'none';
+  document.getElementById('formLogin').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function fecharLogin() {
+  document.getElementById('modalLogin').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function mostrarErro(id, msg) {
+  const err = document.getElementById(id);
+  err.textContent = msg;
+  err.classList.add('show');
+}
 
-      const nome = document.getElementById('cadNome').value.trim();
-      const email = document.getElementById('cadEmail').value.trim();
-      const whatsapp = document.getElementById('cadWhatsapp').value.replace(/\D/g, '');
+// ═══════════════════════════════════════════════════════════════════
+// CADASTRO
+// ═══════════════════════════════════════════════════════════════════
+async function enviarCadastro(event) {
+  event.preventDefault();
+  document.getElementById('errorMsg').classList.remove('show');
 
-      if (!nome || !email || !whatsapp) {
-        mostrarErro('Por favor preencha todos os campos.');
-        return;
-      }
-      if (whatsapp.length < 10) {
-        mostrarErro('WhatsApp inválido. Informe DDD + número.');
-        return;
-      }
+  const nome = document.getElementById('cadNome').value.trim();
+  const email = document.getElementById('cadEmail').value.trim();
+  const whatsapp = document.getElementById('cadWhatsapp').value.replace(/\D/g, '');
+  const senha = document.getElementById('cadSenha').value;
 
-      document.getElementById('formCadastro').style.display = 'none';
-      document.getElementById('planInfo').style.display = 'none';
-      document.getElementById('loadingMsg').style.display = 'block';
+  if (senha.length < 6) {
+    mostrarErro('errorMsg', 'Senha deve ter ao menos 6 caracteres.');
+    return;
+  }
 
-      try {
-        const res = await fetch(N8N_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nome,
-            email,
-            whatsapp,
-            plano: planoSelecionado,
-            valor: valorSelecionado
-          })
-        });
+  document.getElementById('formCadastro').style.display = 'none';
+  document.getElementById('loadingMsg').style.display = 'block';
 
-        if (!res.ok) throw new Error('Erro ao processar cadastro');
-        const data = await res.json();
-        if (!data.checkout_url) throw new Error(data.erro || 'Não foi possível gerar o link de pagamento');
+  try {
+    const senhaHash = await sha256(senha);
 
-        window.location.href = data.checkout_url;
-      } catch (e) {
-        document.getElementById('loadingMsg').style.display = 'none';
-        document.getElementById('formCadastro').style.display = 'block';
-        document.getElementById('planInfo').style.display = 'flex';
-        mostrarErro('Erro: ' + (e.message || 'tente novamente em instantes.'));
-      }
-    }
-
-    document.getElementById('modalCadastro').addEventListener('click', e => {
-      if (e.target.id === 'modalCadastro') fecharCadastro();
+    const res = await fetch(URL_CADASTRO, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome, email, whatsapp,
+        senha_hash: senhaHash,
+        plano: planoSelecionado,
+        valor: valorSelecionado
+      })
     });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('status') === 'success') {
-      setTimeout(() => {
-        alert('✅ Pagamento recebido!\n\nEm instantes você receberá uma mensagem no WhatsApp com seu acesso.');
-        window.history.replaceState({}, '', '/');
-      }, 200);
+    if (!res.ok) throw new Error('Erro ao processar cadastro');
+    const data = await res.json();
+    if (!data.checkout_url) throw new Error(data.erro || 'Não foi possível gerar o link de pagamento');
+
+    window.location.href = data.checkout_url;
+  } catch(e) {
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('formCadastro').style.display = 'block';
+    mostrarErro('errorMsg', 'Erro: ' + (e.message || 'tente novamente.'));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════════════════════
+async function fazerLogin(event) {
+  event.preventDefault();
+  document.getElementById('loginError').classList.remove('show');
+
+  const email = document.getElementById('loginEmail').value.trim();
+  const senha = document.getElementById('loginSenha').value;
+
+  document.getElementById('formLogin').style.display = 'none';
+  document.getElementById('loginLoading').style.display = 'block';
+
+  try {
+    const senhaHash = await sha256(senha);
+    const res = await fetch(URL_LOGIN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha_hash: senhaHash })
+    });
+
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.erro || 'Email ou senha incorretos');
+
+    // Salva sessão
+    usuarioLogado = {
+      email: data.email,
+      nome: data.nome,
+      plano: data.plano,
+      token: data.token
+    };
+    localStorage.setItem('oliverfy_session', JSON.stringify(usuarioLogado));
+
+    fecharLogin();
+    entrarDashboard();
+  } catch(e) {
+    document.getElementById('loginLoading').style.display = 'none';
+    document.getElementById('formLogin').style.display = 'block';
+    mostrarErro('loginError', e.message);
+  }
+}
+
+function logout() {
+  localStorage.removeItem('oliverfy_session');
+  usuarioLogado = null;
+  dadosCache = null;
+  document.getElementById('landing').classList.add('active');
+  document.getElementById('dashboard').classList.remove('active');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════════
+async function entrarDashboard() {
+  document.getElementById('landing').classList.remove('active');
+  document.getElementById('dashboard').classList.add('active');
+
+  // header
+  const u = usuarioLogado;
+  document.getElementById('userName').textContent = u.nome;
+  document.getElementById('userPlan').textContent = `Plano ${u.plano}`;
+  document.getElementById('userAvatar').textContent = u.nome[0].toUpperCase();
+
+  // Esconde aba de lista para Básico
+  if (u.plano === 'Básico') {
+    document.getElementById('tabLista').style.display = 'none';
+  }
+
+  await carregarDados();
+}
+
+async function carregarDados() {
+  try {
+    const res = await fetch(URL_DADOS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        periodo: periodoAtual
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      if (data.erro === 'sessao_invalida') return logout();
+      throw new Error(data.erro);
     }
-  </script>
+    dadosCache = data;
+    renderizar();
+  } catch(e) {
+    alert('Erro ao carregar dados: ' + e.message);
+  }
+}
+
+function fmt(v) {
+  return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function renderizar() {
+  if (abaAtual === 'visao') renderVisao();
+  if (abaAtual === 'transacoes') renderTransacoes();
+  if (abaAtual === 'lista') renderLista();
+}
+
+function renderVisao() {
+  const d = dadosCache;
+  const totalRec = d.rendas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+  const totalDesp = d.despesas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+
+  document.getElementById('cardReceitas').textContent = fmt(totalRec);
+  document.getElementById('cardReceitasSub').textContent = `${d.rendas.length} ${d.rendas.length === 1 ? 'entrada' : 'entradas'}`;
+  document.getElementById('cardDespesas').textContent = fmt(totalDesp);
+  document.getElementById('cardDespesasSub').textContent = `${d.despesas.length} ${d.despesas.length === 1 ? 'gasto' : 'gastos'}`;
+  document.getElementById('cardSaldo').textContent = fmt(totalRec - totalDesp);
+
+  // Maior gasto
+  let maior = { valor: 0, descricao: '—' };
+  d.despesas.forEach(g => {
+    const v = parseFloat(g.valor) || 0;
+    if (v > maior.valor) maior = { valor: v, descricao: g.descricao || '—' };
+  });
+  document.getElementById('cardMaior').textContent = fmt(maior.valor);
+  document.getElementById('cardMaiorSub').textContent = maior.descricao;
+
+  // Categorias
+  const cats = {};
+  d.despesas.forEach(g => {
+    const c = g.categoria || 'Sem categoria';
+    cats[c] = (cats[c] || 0) + (parseFloat(g.valor) || 0);
+  });
+  const catsArr = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+  const max = catsArr[0]?.[1] || 1;
+  const catsEl = document.getElementById('categorias');
+  if (!catsArr.length) {
+    catsEl.innerHTML = '<div class="dash-empty">Sem gastos nesse período</div>';
+  } else {
+    catsEl.innerHTML = catsArr.map(([c, v]) => `
+      <div class="dash-cat">
+        <span class="dash-cat-name">${c}</span>
+        <div class="dash-cat-bar"><div class="dash-cat-bar-fill" style="width:${(v/max*100).toFixed(0)}%"></div></div>
+        <span class="dash-cat-value">${fmt(v)}</span>
+      </div>`).join('');
+  }
+
+  // Gráfico (gastos por dia)
+  const porDia = {};
+  d.despesas.forEach(g => {
+    const dt = g.data || '';
+    porDia[dt] = (porDia[dt] || 0) + (parseFloat(g.valor) || 0);
+  });
+  const dias = Object.keys(porDia).sort((a, b) => {
+    const [da, ma] = a.split('/'); const [db, mb] = b.split('/');
+    return new Date(`2026-${ma}-${da}`) - new Date(`2026-${mb}-${db}`);
+  });
+
+  if (chartInstance) chartInstance.destroy();
+  const ctx = document.getElementById('chartGastos').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dias.length ? dias : ['—'],
+      datasets: [{
+        data: dias.length ? dias.map(d => porDia[d]) : [0],
+        backgroundColor: '#1D9E75',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => 'R$ ' + v } }
+      }
+    }
+  });
+}
+
+function renderTransacoes() {
+  const d = dadosCache;
+  const tudo = [
+    ...d.despesas.map(t => ({...t, tipo: 'despesa'})),
+    ...d.rendas.map(t => ({...t, tipo: 'renda'}))
+  ].sort((a, b) => {
+    const [da, ma] = (a.data || '').split('/'); const [db, mb] = (b.data || '').split('/');
+    return new Date(`2026-${mb}-${db}`) - new Date(`2026-${ma}-${da}`);
+  });
+
+  const el = document.getElementById('transacoesContent');
+  if (!tudo.length) {
+    el.innerHTML = '<div class="dash-empty">Nenhuma transação nesse período</div>';
+    return;
+  }
+  el.innerHTML = `
+    <table class="dash-table">
+      <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th style="text-align:right">Valor</th></tr></thead>
+      <tbody>
+        ${tudo.map(t => `
+          <tr>
+            <td>${t.data || '—'}</td>
+            <td>${t.descricao || '—'}</td>
+            <td>${t.categoria || '—'}</td>
+            <td style="text-align:right" class="${t.tipo === 'renda' ? 'amount-in' : 'amount-out'}">
+              ${t.tipo === 'renda' ? '+' : '-'} ${fmt(parseFloat(t.valor) || 0)}
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+function renderLista() {
+  const lista = dadosCache.lista || [];
+  const el = document.getElementById('listaContent');
+  if (!lista.length) {
+    el.innerHTML = '<div class="dash-empty">Sua lista está vazia<br><small>Mande "adiciona arroz na lista" no WhatsApp</small></div>';
+    return;
+  }
+  el.innerHTML = lista.map((item, i) => `
+    <div class="list-item">
+      <div class="list-check ${item.status === 'comprado' ? 'checked' : ''}" onclick="toggleItem(${i})">
+        ${item.status === 'comprado' ? '✓' : ''}
+      </div>
+      <div class="list-text ${item.status === 'comprado' ? 'checked' : ''}">${item.item || '—'}</div>
+      <div class="list-qty">${item.quantidade || ''}</div>
+    </div>`).join('');
+}
+
+async function toggleItem(i) {
+  const item = dadosCache.lista[i];
+  const novoStatus = item.status === 'comprado' ? 'pendente' : 'comprado';
+  // otimista
+  item.status = novoStatus;
+  renderLista();
+
+  try {
+    await fetch(URL_TOGGLE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        item: item.item,
+        novo_status: novoStatus
+      })
+    });
+  } catch(e) {
+    item.status = item.status === 'comprado' ? 'pendente' : 'comprado';
+    renderLista();
+    alert('Erro ao atualizar item');
+  }
+}
+
+function trocaTab(tab) {
+  abaAtual = tab;
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById('tabVisao').style.display = tab === 'visao' ? 'block' : 'none';
+  document.getElementById('tabTransacoes').style.display = tab === 'transacoes' ? 'block' : 'none';
+  document.getElementById('tabLista').style.display = tab === 'lista' ? 'block' : 'none';
+  document.getElementById('filterRow').style.display = tab === 'lista' ? 'none' : 'flex';
+  if (dadosCache) renderizar();
+}
+
+async function setPeriodo(p) {
+  periodoAtual = p;
+  document.querySelectorAll('.dash-filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  await carregarDados();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Verifica sessão salva
+  const saved = localStorage.getItem('oliverfy_session');
+  if (saved) {
+    try {
+      usuarioLogado = JSON.parse(saved);
+      entrarDashboard();
+    } catch(e) {}
+  }
+
+  // Fechar modais ao clicar fora
+  document.getElementById('modalCadastro').addEventListener('click', e => {
+    if (e.target.id === 'modalCadastro') fecharCadastro();
+  });
+  document.getElementById('modalLogin').addEventListener('click', e => {
+    if (e.target.id === 'modalLogin') fecharLogin();
+  });
+
+  // Sucesso após pagamento
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('status') === 'success') {
+    setTimeout(() => {
+      alert('✅ Pagamento recebido!\n\nEm instantes você receberá uma mensagem no WhatsApp.\nDepois disso, basta entrar com seu email e senha.');
+      window.history.replaceState({}, '', '/oliverfy/');
+    }, 200);
+  }
+});
+</script>
 
 </body>
 </html>
