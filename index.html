@@ -250,7 +250,7 @@
     <div class="dash-tabs">
       <button class="dash-tab active" onclick="trocaTab('visao')" data-tab="visao">Visão geral</button>
       <button class="dash-tab" onclick="trocaTab('transacoes')" data-tab="transacoes">Transações</button>
-      <button class="dash-tab" onclick="trocaTab('lista')" data-tab="lista" id="tabLista">Lista de compras</button>
+      <button class="dash-tab" onclick="trocaTab('lista')" data-tab="lista" id="btnTabLista">Lista de compras</button>
     </div>
 
     <div class="dash-filter-row" id="filterRow">
@@ -307,7 +307,7 @@
     </div>
 
     <!-- LISTA -->
-    <div id="tabLista" style="display:none">
+    <div id="contentLista" style="display:none">
       <div class="dash-box">
         <div class="dash-box-title">Minha lista de compras</div>
         <div id="listaContent"></div>
@@ -522,7 +522,7 @@ async function entrarDashboard() {
 
   // Esconde aba de lista para Básico
   if (u.plano === 'Básico') {
-    document.getElementById('tabLista').style.display = 'none';
+    document.getElementById('btnTabLista').style.display = 'none';
   }
 
   await carregarDados();
@@ -717,7 +717,7 @@ function trocaTab(tab) {
   document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
   document.getElementById('tabVisao').style.display = tab === 'visao' ? 'block' : 'none';
   document.getElementById('tabTransacoes').style.display = tab === 'transacoes' ? 'block' : 'none';
-  document.getElementById('tabLista').style.display = tab === 'lista' ? 'block' : 'none';
+  document.getElementById('contentLista').style.display = tab === 'lista' ? 'block' : 'none';
   document.getElementById('filterRow').style.display = tab === 'lista' ? 'none' : 'flex';
   if (dadosCache) renderizar();
 }
