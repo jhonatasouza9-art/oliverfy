@@ -251,6 +251,7 @@
       <button class="dash-tab active" onclick="trocaTab('visao')" data-tab="visao">Visão geral</button>
       <button class="dash-tab" onclick="trocaTab('transacoes')" data-tab="transacoes">Transações</button>
       <button class="dash-tab" onclick="trocaTab('lista')" data-tab="lista" id="btnTabLista">Lista de compras</button>
+      <button class="dash-tab" onclick="trocaTab('fixos')" data-tab="fixos">Gastos fixos</button>
     </div>
 
     <div class="dash-filter-row" id="filterRow">
@@ -313,6 +314,17 @@
         <div id="listaContent"></div>
       </div>
     </div>
+
+    <!-- GASTOS FIXOS -->
+    <div id="contentFixos" style="display:none">
+      <div class="dash-box">
+        <div class="dash-box-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Meus gastos fixos</span>
+          <button onclick="abrirModalFixo()" style="background:var(--green);color:white;border:none;padding:8px 14px;border-radius:var(--radius);font:500 13px 'DM Sans';cursor:pointer">+ Adicionar</button>
+        </div>
+        <div id="fixosContent"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -360,6 +372,7 @@ const URL_CADASTRO  = `${N8N_BASE}/webhook/oliverfy-cadastro`;
 const URL_LOGIN     = `${N8N_BASE}/webhook/oliverfy-login`;
 const URL_DADOS     = `${N8N_BASE}/webhook/oliverfy-dados`;
 const URL_TOGGLE    = `${N8N_BASE}/webhook/oliverfy-lista-toggle`;
+const URL_FIXOS     = `${N8N_BASE}/webhook/oliverfy-fixos`;
 
 let planoSelecionado = null;
 let valorSelecionado = null;
@@ -711,6 +724,152 @@ async function toggleItem(i) {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════════════════
+// GASTOS FIXOS
+// ═══════════════════════════════════════════════════════════════════
+let fixosCache = [];
+
+async function carregarFixos() {
+  try {
+    const res = await fetch(URL_FIXOS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: 'listar'
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      if (data.erro === 'sessao_invalida') return logout();
+      throw new Error(data.erro);
+    }
+    fixosCache = data.fixos || [];
+    renderFixos();
+  } catch(e) {
+    document.getElementById('fixosContent').innerHTML = '<div class="dash-empty">Erro ao carregar: ' + e.message + '</div>';
+  }
+}
+
+function renderFixos() {
+  const el = document.getElementById('fixosContent');
+  if (!fixosCache.length) {
+    el.innerHTML = '<div class="dash-empty">Nenhum gasto fixo cadastrado<br><small>Clica em "+ Adicionar" para criar o primeiro</small></div>';
+    return;
+  }
+  const hoje = new Date().getDate();
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">${fixosCache.map(f => {
+    const dia = parseInt(f.dia_vencimento) || 1;
+    const ativo = (f.status || 'ativo') === 'ativo';
+    const proximo = dia >= hoje;
+    const diasAteVencer = proximo ? dia - hoje : (30 - hoje + dia);
+    let badge = '';
+    if (ativo) {
+      if (diasAteVencer === 0) badge = '<span style="background:var(--red-light);color:var(--red);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Vence hoje</span>';
+      else if (diasAteVencer === 1) badge = '<span style="background:#FFEDD5;color:#9A3412;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Vence amanhã</span>';
+      else if (diasAteVencer <= 5) badge = `<span style="background:var(--green-light);color:var(--green-dark);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Em ${diasAteVencer} dias</span>`;
+    } else {
+      badge = '<span style="background:var(--surface2);color:var(--text2);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Pausado</span>';
+    }
+    return `
+      <div onclick='editarFixo(${JSON.stringify(f)})' style="background:var(--surface2);padding:14px 16px;border-radius:var(--radius);cursor:pointer;display:flex;justify-content:space-between;align-items:center;${!ativo ? 'opacity:0.6' : ''}">
+        <div>
+          <div style="font-weight:500;font-size:14px">${f.nome}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Dia ${dia} · ${f.categoria || 'Outros'} ${badge ? ' · ' + badge : ''}</div>
+        </div>
+        <div style="font-weight:600;font-size:16px">${fmt(parseFloat(f.valor) || 0)}</div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+function abrirModalFixo() {
+  document.getElementById('modalFixoTitulo').textContent = 'Novo gasto fixo';
+  document.getElementById('formFixo').reset();
+  document.getElementById('fixoLinha').value = '';
+  document.getElementById('fixoStatusWrap').style.display = 'none';
+  document.getElementById('btnDeletarFixo').style.display = 'none';
+  document.getElementById('fixoError').classList.remove('show');
+  document.getElementById('modalFixo').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function editarFixo(f) {
+  document.getElementById('modalFixoTitulo').textContent = 'Editar gasto fixo';
+  document.getElementById('fixoLinha').value = f.linha;
+  document.getElementById('fixoNome').value = f.nome || '';
+  document.getElementById('fixoValor').value = f.valor || '';
+  document.getElementById('fixoDia').value = f.dia_vencimento || '';
+  document.getElementById('fixoCategoria').value = f.categoria || 'Outros';
+  document.getElementById('fixoStatus').value = f.status || 'ativo';
+  document.getElementById('fixoStatusWrap').style.display = 'block';
+  document.getElementById('btnDeletarFixo').style.display = 'block';
+  document.getElementById('fixoError').classList.remove('show');
+  document.getElementById('modalFixo').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalFixo() {
+  document.getElementById('modalFixo').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function salvarFixo(event) {
+  event.preventDefault();
+  const linha = document.getElementById('fixoLinha').value;
+  const fixo = {
+    nome: document.getElementById('fixoNome').value.trim(),
+    valor: document.getElementById('fixoValor').value,
+    dia_vencimento: document.getElementById('fixoDia').value,
+    categoria: document.getElementById('fixoCategoria').value,
+    status: document.getElementById('fixoStatus').value || 'ativo'
+  };
+  if (linha) fixo.linha = parseInt(linha);
+
+  try {
+    const res = await fetch(URL_FIXOS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: linha ? 'editar' : 'criar',
+        fixo: fixo
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.erro || 'Erro ao salvar');
+    fecharModalFixo();
+    await carregarFixos();
+  } catch(e) {
+    mostrarErro('fixoError', e.message);
+  }
+}
+
+async function deletarFixo() {
+  if (!confirm('Tem certeza que quer excluir esse gasto fixo?')) return;
+  const linha = document.getElementById('fixoLinha').value;
+  try {
+    const res = await fetch(URL_FIXOS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: 'deletar',
+        fixo: { linha: parseInt(linha) }
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.erro || 'Erro ao excluir');
+    fecharModalFixo();
+    await carregarFixos();
+  } catch(e) {
+    mostrarErro('fixoError', e.message);
+  }
+}
+
 function trocaTab(tab) {
   abaAtual = tab;
   document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
@@ -718,8 +877,10 @@ function trocaTab(tab) {
   document.getElementById('tabVisao').style.display = tab === 'visao' ? 'block' : 'none';
   document.getElementById('tabTransacoes').style.display = tab === 'transacoes' ? 'block' : 'none';
   document.getElementById('contentLista').style.display = tab === 'lista' ? 'block' : 'none';
-  document.getElementById('filterRow').style.display = tab === 'lista' ? 'none' : 'flex';
-  if (dadosCache) renderizar();
+  document.getElementById('contentFixos').style.display = tab === 'fixos' ? 'block' : 'none';
+  document.getElementById('filterRow').style.display = (tab === 'lista' || tab === 'fixos') ? 'none' : 'flex';
+  if (tab === 'fixos') carregarFixos();
+  else if (dadosCache) renderizar();
 }
 
 async function setPeriodo(p) {
@@ -749,6 +910,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modalLogin').addEventListener('click', e => {
     if (e.target.id === 'modalLogin') fecharLogin();
   });
+  document.getElementById('modalFixo').addEventListener('click', e => {
+    if (e.target.id === 'modalFixo') fecharModalFixo();
+  });
 
   // Sucesso após pagamento
   const params = new URLSearchParams(window.location.search);
@@ -760,6 +924,43 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+
+
+<!-- MODAL GASTO FIXO -->
+<div class="modal-bg" id="modalFixo">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModalFixo()">×</button>
+    <h2 id="modalFixoTitulo">Novo gasto fixo</h2>
+    <p class="modal-sub">Cadastre gastos recorrentes para receber lembretes</p>
+    <div class="error-msg" id="fixoError"></div>
+    <form id="formFixo" onsubmit="salvarFixo(event)">
+      <input type="hidden" id="fixoLinha" />
+      <div class="field"><label>Nome do gasto</label><input type="text" id="fixoNome" required placeholder="Aluguel, internet, academia..." /></div>
+      <div class="field"><label>Valor (R$)</label><input type="number" id="fixoValor" required step="0.01" min="0" placeholder="150" /></div>
+      <div class="field"><label>Dia do vencimento</label><input type="number" id="fixoDia" required min="1" max="31" placeholder="5" /></div>
+      <div class="field"><label>Categoria</label>
+        <select id="fixoCategoria" style="width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--radius);font:14px 'DM Sans';background:var(--surface);color:var(--text)">
+          <option value="Casa">Casa</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Alimentação">Alimentação</option>
+          <option value="Saúde">Saúde</option>
+          <option value="Lazer">Lazer</option>
+          <option value="Educação">Educação</option>
+          <option value="Assinaturas">Assinaturas</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+      <div class="field" id="fixoStatusWrap" style="display:none"><label>Status</label>
+        <select id="fixoStatus" style="width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--radius);font:14px 'DM Sans';background:var(--surface);color:var(--text)">
+          <option value="ativo">Ativo</option>
+          <option value="pausado">Pausado</option>
+        </select>
+      </div>
+      <button type="submit" class="modal-btn" id="btnSalvarFixo">Salvar</button>
+      <button type="button" class="modal-btn" id="btnDeletarFixo" style="background:var(--red);display:none;margin-top:8px" onclick="deletarFixo()">Excluir gasto</button>
+    </form>
+  </div>
+</div>
 
 </body>
 </html>
