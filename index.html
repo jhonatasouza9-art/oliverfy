@@ -175,45 +175,61 @@
     .dash-relatorios-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
 
     /* PREVISIBILIDADE */
-    .prev-card-resumo { background: var(--green-light); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; }
-    .prev-resumo-label { font-size: 13px; color: var(--green-dark); margin-bottom: 6px; font-weight: 500; }
-    .prev-resumo-cota { font-size: 36px; font-weight: 700; color: var(--green-deep); line-height: 1.1; }
-    .prev-resumo-cota.negativo { color: #A32D2D; }
-    .prev-resumo-sub { font-size: 13px; color: var(--green-dark); margin-top: 8px; }
-    .prev-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(15,110,86,0.2); }
-    .prev-stat-label { font-size: 11px; color: var(--green-dark); text-transform: uppercase; letter-spacing: 0.3px; font-weight: 500; }
-    .prev-stat-value { font-size: 16px; font-weight: 600; margin-top: 3px; color: var(--text); }
-    .prev-legenda { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 1rem; font-size: 12px; color: var(--text2); }
-    .prev-leg-item { display: inline-flex; align-items: center; gap: 5px; }
+    .prev-resumo { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem; }
+    @media (max-width: 768px) { .prev-resumo { grid-template-columns: 1fr 1fr; } }
+    .prev-resumo-bloco { background: var(--surface); padding: 18px 20px; }
+    .prev-resumo-bloco.principal { background: var(--surface); }
+    .prev-resumo-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; margin-bottom: 8px; }
+    .prev-resumo-valor { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1.1; letter-spacing: -0.3px; }
+    .prev-resumo-bloco.principal .prev-resumo-valor { font-size: 28px; color: var(--green); }
+    .prev-resumo-bloco.principal .prev-resumo-valor.negativo { color: #C0392B; }
+    .prev-resumo-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+    .prev-resumo-bloco.principal .prev-resumo-sub { color: var(--text2); }
+
+    .prev-saldo-info { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--surface2); border-radius: var(--radius); margin-bottom: 1.5rem; font-size: 13px; color: var(--text2); }
+    .prev-saldo-info.positivo { color: var(--green-dark); background: var(--green-light); }
+    .prev-saldo-info.negativo { color: #952B1F; background: #FDECEA; }
+
+    .prev-cal-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .prev-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .prev-cal-titulo { font-size: 15px; font-weight: 600; color: var(--text); }
+    .prev-cal-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .prev-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .prev-cal-head { font-size: 11px; color: var(--text2); text-align: center; padding: 6px 0; font-weight: 500; letter-spacing: 0.3px; }
+    .prev-cal-cell { aspect-ratio: 1; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius); border: 1px solid transparent; transition: all 0.12s; cursor: default; min-height: 56px; }
+    .prev-cal-cell.empty { background: transparent; border-color: transparent; }
+    .prev-cal-cell.ok { background: var(--surface2); }
+    .prev-cal-cell.furou { background: #FDECEA; }
+    .prev-cal-cell.economizou { background: var(--green-light); }
+    .prev-cal-cell.hoje { background: var(--surface); border-color: var(--green); box-shadow: 0 0 0 2px var(--green-light); }
+    .prev-cal-cell.futuro { background: var(--surface); border-color: var(--border); }
+    .prev-cal-cell:not(.empty):hover { transform: translateY(-1px); }
+    .prev-cal-dia { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1; }
+    .prev-cal-cell.ok .prev-cal-dia, .prev-cal-cell.economizou .prev-cal-dia { color: var(--text2); }
+    .prev-cal-cell.hoje .prev-cal-dia { color: var(--green); }
+    .prev-cal-cota { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.1; }
+    .prev-cal-cell.futuro .prev-cal-cota { color: var(--text2); font-weight: 500; }
+    .prev-cal-cell.ok .prev-cal-cota { color: var(--text); }
+    .prev-cal-cell.economizou .prev-cal-cota { color: var(--green-dark); }
+    .prev-cal-cell.furou .prev-cal-cota { color: #952B1F; }
+    .prev-cal-cell.hoje .prev-cal-cota { color: var(--green-dark); font-weight: 700; }
+
+    .prev-legenda { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 1rem; font-size: 12px; color: var(--text2); padding-top: 1rem; border-top: 1px solid var(--border); }
+    .prev-leg-item { display: inline-flex; align-items: center; gap: 6px; }
     .prev-leg-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-    .leg-hoje { background: var(--green); }
-    .leg-futuro { background: var(--green-light); border: 1px solid var(--green); }
-    .leg-furou { background: #FCEBEB; border: 1px solid #E24B4A; }
-    .leg-ok { background: var(--surface); border: 1px solid var(--border2); }
-    .prev-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .prev-cal-head { font-size: 11px; color: var(--text2); text-align: center; padding: 4px 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.3px; }
-    .prev-cal-cell { aspect-ratio: 1; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; font-size: 11px; border: 1px solid var(--border); cursor: default; transition: transform 0.1s; }
-    .prev-cal-cell:hover { transform: scale(1.05); z-index: 2; }
-    .prev-cal-cell.empty { background: transparent; border: none; cursor: default; }
-    .prev-cal-cell.empty:hover { transform: none; }
-    .prev-cal-cell.ok { background: var(--surface); }
-    .prev-cal-cell.furou { background: #FCEBEB; border-color: #E24B4A; }
-    .prev-cal-cell.hoje { border: 2px solid var(--green); background: var(--green-light); }
-    .prev-cal-cell.futuro { background: var(--green-light); opacity: 0.7; }
-    .prev-cal-cell.aguardando { background: #FAEEDA; border-color: #EF9F27; }
-    .prev-cal-dia { font-weight: 700; font-size: 12px; color: var(--text); }
-    .prev-cal-cota { font-size: 10px; font-weight: 600; line-height: 1.2; word-break: break-word; }
-    .prev-cal-cell.ok .prev-cal-cota { color: var(--text2); }
-    .prev-cal-cell.furou .prev-cal-cota { color: #A32D2D; }
-    .prev-cal-cell.hoje .prev-cal-cota { color: var(--green-deep); }
-    .prev-cal-cell.futuro .prev-cal-cota { color: var(--green-dark); }
-    .prev-cal-cell.aguardando .prev-cal-cota { color: #854F0B; }
-    .prev-empty-state { text-align: center; padding: 3rem 1rem; color: var(--text2); }
-    .prev-empty-state .icone { font-size: 32px; margin-bottom: 12px; }
-    .prev-no-renda { background: #FAEEDA; border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; display: flex; gap: 12px; align-items: flex-start; }
-    .prev-no-renda-icon { font-size: 24px; flex-shrink: 0; }
-    .prev-no-renda-text { font-size: 13px; color: #854F0B; line-height: 1.5; }
-    .prev-no-renda-text strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .leg-hoje { background: var(--surface); border: 2px solid var(--green); }
+    .leg-futuro { background: var(--surface); border: 1px solid var(--border); }
+    .leg-economizou { background: var(--green-light); }
+    .leg-furou { background: #FDECEA; }
+
+    .prev-explicacao { font-size: 13px; color: var(--text2); line-height: 1.6; padding: 1rem 1.25rem; background: var(--surface2); border-radius: var(--radius); border: 1px solid var(--border); }
+    .prev-explicacao strong { color: var(--text); font-weight: 600; }
+
+    .prev-aviso { display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 1.5rem; }
+    .prev-aviso-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+    .prev-aviso-texto { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .prev-aviso-texto strong { display: block; margin-bottom: 2px; font-size: 13px; }
+    .prev-aviso-texto a { color: var(--green); cursor: pointer; text-decoration: underline; }
     .list-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .list-item:last-child { border-bottom: none; }
     .list-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--border2); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
@@ -424,43 +440,51 @@
 
     <!-- PREVISIBILIDADE -->
     <div id="tabPrevisibilidade" style="display:none">
-      <div class="prev-card-resumo">
-        <div class="prev-resumo-label">Você pode gastar hoje</div>
-        <div class="prev-resumo-cota" id="prevCotaHoje">R$ 0,00</div>
-        <div class="prev-resumo-sub" id="prevCotaSub">Calculando...</div>
+      <div id="prevAvisoSemRenda" style="display:none"></div>
 
-        <div class="prev-stats">
-          <div>
-            <div class="prev-stat-label">Renda do ciclo</div>
-            <div class="prev-stat-value" id="prevRenda">R$ 0,00</div>
-          </div>
-          <div>
-            <div class="prev-stat-label">Fixos do ciclo</div>
-            <div class="prev-stat-value" id="prevFixos">R$ 0,00</div>
-          </div>
-          <div>
-            <div class="prev-stat-label">Já gastei</div>
-            <div class="prev-stat-value" id="prevGasto">R$ 0,00</div>
-          </div>
+      <div class="prev-resumo">
+        <div class="prev-resumo-bloco principal">
+          <div class="prev-resumo-label">Cota de hoje</div>
+          <div class="prev-resumo-valor" id="prevCotaHoje">R$ 0,00</div>
+          <div class="prev-resumo-sub" id="prevCotaSub">—</div>
+        </div>
+        <div class="prev-resumo-bloco">
+          <div class="prev-resumo-label">Renda do ciclo</div>
+          <div class="prev-resumo-valor" id="prevRenda">R$ 0</div>
+          <div class="prev-resumo-sub" id="prevRendaSub">—</div>
+        </div>
+        <div class="prev-resumo-bloco">
+          <div class="prev-resumo-label">Fixos do ciclo</div>
+          <div class="prev-resumo-valor" id="prevFixos">R$ 0</div>
+          <div class="prev-resumo-sub" id="prevFixosSub">—</div>
+        </div>
+        <div class="prev-resumo-bloco">
+          <div class="prev-resumo-label">Já gastei</div>
+          <div class="prev-resumo-valor" id="prevGasto">R$ 0</div>
+          <div class="prev-resumo-sub" id="prevGastoSub">—</div>
         </div>
       </div>
 
-      <div class="dash-box">
-        <div class="dash-box-title" id="prevCalTitle">Cota diária</div>
+      <div id="prevSaldoInfo" class="prev-saldo-info" style="display:none"></div>
+
+      <div class="prev-cal-wrap">
+        <div class="prev-cal-header">
+          <div>
+            <div class="prev-cal-titulo" id="prevCalTitle">Cota diária</div>
+            <div class="prev-cal-sub" id="prevCalSub">Ciclo do mês</div>
+          </div>
+        </div>
+        <div class="prev-cal-grid" id="prevCalGrid"></div>
         <div class="prev-legenda">
           <span class="prev-leg-item"><span class="prev-leg-dot leg-hoje"></span>Hoje</span>
           <span class="prev-leg-item"><span class="prev-leg-dot leg-futuro"></span>Cota projetada</span>
+          <span class="prev-leg-item"><span class="prev-leg-dot leg-economizou"></span>Economizou</span>
           <span class="prev-leg-item"><span class="prev-leg-dot leg-furou"></span>Furou a cota</span>
-          <span class="prev-leg-item"><span class="prev-leg-dot leg-ok"></span>Dentro da cota</span>
         </div>
-        <div class="prev-cal-grid" id="prevCalGrid"></div>
       </div>
 
-      <div class="dash-box" style="margin-top: 1rem;">
-        <div class="dash-box-title">Como funciona</div>
-        <p style="font-size: 13px; color: var(--text2); line-height: 1.6; margin: 0;">
-          Sua cota diária é calculada com base em: <strong>soma de todas as rendas fixas do ciclo</strong> menos <strong>todos os gastos fixos</strong> menos <strong>o que já gastou</strong>, dividido pelos dias restantes do ciclo. O <strong>ciclo começa no dia da sua maior renda fixa</strong> e termina um dia antes do próximo recebimento. Se você furar num dia, a cota dos próximos dias se ajusta sozinha. Se sobrar dinheiro num dia, ele se redistribui pra cima dos próximos.
-        </p>
+      <div class="prev-explicacao">
+        Cota base: <strong>(renda do ciclo − fixos) ÷ dias do ciclo</strong>, igual para todos os dias. Quando o dia <strong>vira</strong>, o que sobrou (ou faltou) da cota é redistribuído nos dias seguintes — então hoje a cota pode ser diferente da inicial. O ciclo começa no dia da sua <strong>maior renda fixa</strong>.
       </div>
     </div>
   </div>
@@ -1570,23 +1594,20 @@ function calcularEDesenharPrevisibilidade() {
 
   // ----- Determina o ciclo -----
   const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
   const anoHoje = hoje.getFullYear();
-  const mesHoje = hoje.getMonth(); // 0-11
+  const mesHoje = hoje.getMonth();
   const diaHoje = hoje.getDate();
 
-  let cicloInicio, cicloFim, diaCicloInicio;
+  let cicloInicio, cicloFim, semRenda = false;
 
   if (rendasAtivas.length === 0) {
-    // Sem renda fixa cadastrada: usa mês civil
+    semRenda = true;
     cicloInicio = new Date(anoHoje, mesHoje, 1);
-    cicloFim = new Date(anoHoje, mesHoje + 1, 0); // último dia do mês
-    diaCicloInicio = 1;
+    cicloFim = new Date(anoHoje, mesHoje + 1, 0);
   } else {
-    // Identifica maior renda fixa = âncora do ciclo
     const ancora = [...rendasAtivas].sort((a,b) => (parseFloat(b.valor)||0) - (parseFloat(a.valor)||0))[0];
-    diaCicloInicio = parseInt(ancora.dia_recebimento) || 1;
-
-    // Ciclo começa no dia da âncora; se hoje já passou, ciclo é deste mês até próximo recebimento
+    const diaCicloInicio = parseInt(ancora.dia_recebimento) || 1;
     if (diaHoje >= diaCicloInicio) {
       cicloInicio = new Date(anoHoje, mesHoje, diaCicloInicio);
       cicloFim = new Date(anoHoje, mesHoje + 1, diaCicloInicio - 1);
@@ -1596,161 +1617,166 @@ function calcularEDesenharPrevisibilidade() {
     }
   }
 
-  // Total de dias do ciclo
   const msPorDia = 1000 * 60 * 60 * 24;
   const totalDiasCiclo = Math.round((cicloFim - cicloInicio) / msPorDia) + 1;
+  const diaDoCiclo = Math.round((hoje - cicloInicio) / msPorDia) + 1; // 1-indexado
 
-  // Dia que estamos NO CICLO (1-indexado)
-  const diaDoCiclo = Math.round((hoje - cicloInicio) / msPorDia) + 1;
-  const diasRestantes = totalDiasCiclo - diaDoCiclo + 1;
-
-  // ----- Soma das rendas fixas (entram inteiras no ciclo, independente de já ter caído) -----
+  // ----- Totais -----
   const totalRenda = rendasAtivas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
-
-  // ----- Soma dos gastos fixos -----
   const totalFixos = fixosAtivos.reduce((s, f) => s + (parseFloat(f.valor) || 0), 0);
+  const orcamentoVariavel = totalRenda - totalFixos;
 
-  // ----- Despesas variáveis dentro do ciclo -----
+  // ----- Cota BASE (igual para todos os dias do ciclo, calculada uma vez) -----
+  const cotaBase = totalDiasCiclo > 0 ? orcamentoVariavel / totalDiasCiclo : 0;
+
+  // ----- Despesas variáveis do ciclo, agregadas por dia do ciclo -----
   const despesasCiclo = (dadosCache12M.despesas || []).filter(g => {
     const dt = parseDataBR(g.data);
     if (!dt) return false;
+    dt.setHours(0, 0, 0, 0);
     return dt >= cicloInicio && dt <= cicloFim;
   });
-  // Agrega por dia do ciclo (1-indexado)
-  const gastosPorDiaCiclo = {};
+  const gastosPorDia = {};
   despesasCiclo.forEach(g => {
     const dt = parseDataBR(g.data);
+    dt.setHours(0, 0, 0, 0);
     const diaCiclo = Math.round((dt - cicloInicio) / msPorDia) + 1;
-    gastosPorDiaCiclo[diaCiclo] = (gastosPorDiaCiclo[diaCiclo] || 0) + (parseFloat(g.valor) || 0);
+    gastosPorDia[diaCiclo] = (gastosPorDia[diaCiclo] || 0) + (parseFloat(g.valor) || 0);
   });
   const totalGastoCiclo = despesasCiclo.reduce((s, g) => s + (parseFloat(g.valor) || 0), 0);
 
-  // Gastos até ontem (pra cota de hoje)
-  let gastoAteOntem = 0;
+  // ----- Saldo acumulado dos dias passados (não inclui hoje) -----
+  // Se sobrou: positivo (economizou). Se gastou demais: negativo (furou).
+  let saldoAcumulado = 0;
   for (let d = 1; d < diaDoCiclo; d++) {
-    gastoAteOntem += (gastosPorDiaCiclo[d] || 0);
+    saldoAcumulado += (cotaBase - (gastosPorDia[d] || 0));
   }
 
-  // ----- Cota de hoje -----
-  const saldoRestante = totalRenda - totalFixos - gastoAteOntem;
-  const cotaHoje = diasRestantes > 0 ? saldoRestante / diasRestantes : 0;
+  // ----- Cota de HOJE em diante (cota base + redistribuição do saldo) -----
+  const diasRestantes = totalDiasCiclo - diaDoCiclo + 1;
+  const cotaAjustada = diasRestantes > 0 ? cotaBase + (saldoAcumulado / diasRestantes) : 0;
 
-  // ----- Card resumo -----
+  // ----- Atualiza CARD RESUMO -----
   const elCota = document.getElementById('prevCotaHoje');
   const elSub = document.getElementById('prevCotaSub');
-  elCota.textContent = fmt(cotaHoje);
-  elCota.classList.toggle('negativo', cotaHoje < 0);
+  elCota.textContent = fmt(cotaAjustada);
+  elCota.classList.toggle('negativo', cotaAjustada < 0);
 
-  if (rendasAtivas.length === 0) {
-    elSub.textContent = `Cadastre suas rendas fixas para um cálculo mais preciso`;
-  } else if (cotaHoje < 0) {
-    elSub.textContent = `Já passou do limite do ciclo • restam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
+  if (diasRestantes <= 0) {
+    elSub.textContent = 'Ciclo encerrado';
+  } else if (cotaAjustada < 0) {
+    elSub.textContent = `Já estourou o ciclo · ${diasRestantes} ${diasRestantes === 1 ? 'dia restante' : 'dias restantes'}`;
+  } else if (Math.abs(cotaAjustada - cotaBase) < 0.01) {
+    elSub.textContent = `${diasRestantes} ${diasRestantes === 1 ? 'dia restante' : 'dias restantes'}`;
+  } else if (cotaAjustada > cotaBase) {
+    elSub.textContent = `${diasRestantes} dias restantes · cota base R$ ${cotaBase.toFixed(2).replace('.',',')}`;
   } else {
-    elSub.textContent = `Sem furar o ciclo • restam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
+    elSub.textContent = `${diasRestantes} dias restantes · cota base R$ ${cotaBase.toFixed(2).replace('.',',')}`;
   }
 
   document.getElementById('prevRenda').textContent = fmt(totalRenda);
+  document.getElementById('prevRendaSub').textContent = rendasAtivas.length === 0 ? 'Não cadastrada' : `${rendasAtivas.length} ${rendasAtivas.length === 1 ? 'fonte' : 'fontes'}`;
   document.getElementById('prevFixos').textContent = fmt(totalFixos);
+  document.getElementById('prevFixosSub').textContent = `${fixosAtivos.length} ${fixosAtivos.length === 1 ? 'gasto' : 'gastos'}`;
   document.getElementById('prevGasto').textContent = fmt(totalGastoCiclo);
+  document.getElementById('prevGastoSub').textContent = `${despesasCiclo.length} ${despesasCiclo.length === 1 ? 'lançamento' : 'lançamentos'}`;
 
-  // Título dinâmico do calendário
+  // Título do ciclo
   const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-  const tituloCiclo = rendasAtivas.length === 0
+  document.getElementById('prevCalTitle').textContent = semRenda
     ? `Cota diária — ${meses[mesHoje]}/${anoHoje}`
-    : `Ciclo: ${String(cicloInicio.getDate()).padStart(2,'0')}/${meses[cicloInicio.getMonth()]} → ${String(cicloFim.getDate()).padStart(2,'0')}/${meses[cicloFim.getMonth()]}`;
-  document.getElementById('prevCalTitle').textContent = tituloCiclo;
+    : `Ciclo atual`;
+  document.getElementById('prevCalSub').textContent = semRenda
+    ? `Mês civil (você ainda não cadastrou rendas fixas)`
+    : `${String(cicloInicio.getDate()).padStart(2,'0')}/${meses[cicloInicio.getMonth()]} — ${String(cicloFim.getDate()).padStart(2,'0')}/${meses[cicloFim.getMonth()]} · ${totalDiasCiclo} dias`;
 
-  // ----- Aviso amigável quando sem renda fixa -----
-  // Remove aviso antigo se existir
-  const avisoAntigo = document.getElementById('prevNoRendaAviso');
-  if (avisoAntigo) avisoAntigo.remove();
-  if (rendasAtivas.length === 0) {
-    const aviso = document.createElement('div');
-    aviso.id = 'prevNoRendaAviso';
-    aviso.className = 'prev-no-renda';
-    aviso.innerHTML = `
-      <div class="prev-no-renda-icon">💡</div>
-      <div class="prev-no-renda-text">
-        <strong>Cadastre suas rendas fixas</strong>
-        Sem rendas fixas, o cálculo usa o mês civil. Vai pra aba <strong>"Renda fixa"</strong> e cadastra seu salário — o ciclo passa a girar no dia do seu pagamento.
+  // ----- Banner saldo acumulado -----
+  const elSaldoInfo = document.getElementById('prevSaldoInfo');
+  if (diaDoCiclo > 1) {
+    elSaldoInfo.style.display = 'flex';
+    if (saldoAcumulado >= 0.01) {
+      elSaldoInfo.className = 'prev-saldo-info positivo';
+      elSaldoInfo.innerHTML = `✓ Você economizou <strong style="margin: 0 4px">${fmt(saldoAcumulado)}</strong> nos últimos ${diaDoCiclo-1} ${diaDoCiclo-1 === 1 ? 'dia' : 'dias'} — isso se redistribui na cota dos dias seguintes`;
+    } else if (saldoAcumulado <= -0.01) {
+      elSaldoInfo.className = 'prev-saldo-info negativo';
+      elSaldoInfo.innerHTML = `⚠ Você furou <strong style="margin: 0 4px">${fmt(Math.abs(saldoAcumulado))}</strong> nos últimos ${diaDoCiclo-1} ${diaDoCiclo-1 === 1 ? 'dia' : 'dias'} — a cota dos próximos dias foi reduzida pra compensar`;
+    } else {
+      elSaldoInfo.style.display = 'none';
+    }
+  } else {
+    elSaldoInfo.style.display = 'none';
+  }
+
+  // ----- Aviso "sem renda fixa" -----
+  const elAviso = document.getElementById('prevAvisoSemRenda');
+  if (semRenda) {
+    elAviso.style.display = 'block';
+    elAviso.innerHTML = `
+      <div class="prev-aviso">
+        <span class="prev-aviso-icon">💡</span>
+        <div class="prev-aviso-texto">
+          <strong>Cadastre suas rendas fixas para um cálculo preciso</strong>
+          Sem rendas fixas, usamos o mês civil. <a onclick="trocaTab('rendasfixas')">Ir pra Renda fixa</a>
+        </div>
       </div>`;
-    const card = document.querySelector('.prev-card-resumo');
-    card.parentNode.insertBefore(aviso, card);
+  } else {
+    elAviso.style.display = 'none';
+    elAviso.innerHTML = '';
   }
 
-  // ----- Calcula cota dia a dia do ciclo -----
-  const cotaPorDiaCiclo = {};
-  let saldoSimulado = totalRenda - totalFixos;
-  for (let d = 1; d <= totalDiasCiclo; d++) {
-    const diasRest = totalDiasCiclo - d + 1;
-    cotaPorDiaCiclo[d] = diasRest > 0 ? saldoSimulado / diasRest : 0;
-    saldoSimulado -= (gastosPorDiaCiclo[d] || 0);
-  }
-
-  // ----- Renderiza calendário (cada célula = 1 dia do ciclo) -----
-  // Como o ciclo pode atravessar meses, vamos mostrar cada dia com sua data real
+  // ----- Renderiza calendário -----
   const cells = [];
-  // Header com dias da semana
   ['D','S','T','Q','Q','S','S'].forEach(d => {
     cells.push(`<div class="prev-cal-head">${d}</div>`);
   });
-  // Quantos vazios antes do primeiro dia do ciclo
-  const primeiroDiaSemana = cicloInicio.getDay(); // 0=Dom..6=Sáb
+
+  const primeiroDiaSemana = cicloInicio.getDay();
   for (let i = 0; i < primeiroDiaSemana; i++) {
     cells.push(`<div class="prev-cal-cell empty"></div>`);
   }
 
   for (let d = 1; d <= totalDiasCiclo; d++) {
     const dataDia = new Date(cicloInicio.getTime() + (d - 1) * msPorDia);
-    const cota = cotaPorDiaCiclo[d];
-    const gasto = gastosPorDiaCiclo[d] || 0;
+    const gasto = gastosPorDia[d] || 0;
+    const labelDia = `${dataDia.getDate()}`;
+
     let cls = '';
-    let cotaText = '';
+    let valorMostrado = '';
     let title = '';
 
     if (d < diaDoCiclo) {
-      // Dia passado
-      if (gasto > cota && cota > 0) {
+      // PASSADO: mostra o que aconteceu naquele dia
+      if (gasto > cotaBase + 0.01) {
         cls = 'furou';
-        const excesso = gasto - cota;
-        cotaText = '−' + fmt(excesso);
-        title = `Cota era ${fmt(cota)} • Gastou ${fmt(gasto)} • Furou ${fmt(excesso)}`;
+        valorMostrado = fmt(gasto);
+        title = `Cota era ${fmt(cotaBase)} · Gastou ${fmt(gasto)} · Furou ${fmt(gasto - cotaBase)}`;
       } else if (gasto > 0) {
-        cls = 'ok';
-        cotaText = fmt(gasto);
-        title = `Gastou ${fmt(gasto)} (cota era ${fmt(cota)})`;
+        cls = 'economizou';
+        valorMostrado = fmt(gasto);
+        title = `Gastou ${fmt(gasto)} · Sobraram ${fmt(cotaBase - gasto)} da cota`;
       } else {
-        cls = 'ok';
-        cotaText = '—';
-        title = `Sem gastos (cota era ${fmt(cota)})`;
+        cls = 'economizou';
+        valorMostrado = '—';
+        title = `Sem gastos · Sobrou ${fmt(cotaBase)} da cota`;
       }
     } else if (d === diaDoCiclo) {
-      if (cota < 0) {
-        cls = 'aguardando';
-        cotaText = fmt(cota);
-        title = 'Cota negativa: já passou do limite do ciclo';
-      } else {
-        cls = 'hoje';
-        cotaText = fmt(cota);
-        title = `Você pode gastar até ${fmt(cota)} hoje`;
-      }
+      // HOJE: mostra a cota ajustada
+      cls = 'hoje';
+      valorMostrado = fmt(cotaAjustada);
+      title = cotaAjustada < 0
+        ? `Cota negativa: já estourou o ciclo`
+        : `Você pode gastar até ${fmt(cotaAjustada)} hoje`;
     } else {
-      // Dia futuro
-      if (cota < 0) {
-        cls = 'aguardando';
-        cotaText = fmt(cota);
-        title = 'Projeção negativa';
-      } else {
-        cls = 'futuro';
-        cotaText = fmt(cota);
-        title = `Cota projetada: ${fmt(cota)}`;
-      }
+      // FUTURO: mostra a mesma cota ajustada de hoje (projeção)
+      cls = 'futuro';
+      valorMostrado = fmt(cotaAjustada);
+      title = `Cota projetada: ${fmt(cotaAjustada)}`;
     }
 
     cells.push(`
       <div class="prev-cal-cell ${cls}" title="${title}">
-        <span class="prev-cal-dia">${dataDia.getDate()}/${String(dataDia.getMonth()+1).padStart(2,'0')}</span>
-        <span class="prev-cal-cota">${cotaText}</span>
+        <span class="prev-cal-dia">${labelDia}</span>
+        <span class="prev-cal-cota">${valorMostrado}</span>
       </div>
     `);
   }
