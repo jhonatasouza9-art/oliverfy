@@ -594,7 +594,24 @@ async function carregarDados() {
         periodo: periodoAtual
       })
     });
-    const data = await res.json();
+
+    // Captura texto cru antes de parsear pra diagnóstico
+    const textoCru = await res.text();
+    let data;
+    try {
+      data = JSON.parse(textoCru);
+    } catch(e) {
+      console.error('[Oliverfy] Resposta inválida do /oliverfy-dados:', {
+        status: res.status,
+        statusText: res.statusText,
+        corpo: textoCru.slice(0, 500)
+      });
+      throw new Error(
+        `Resposta inválida do servidor (status ${res.status}). ` +
+        `Corpo: "${textoCru.slice(0, 200) || '(vazio)'}"`
+      );
+    }
+
     if (!data.ok) {
       if (data.erro === 'sessao_invalida') return logout();
       throw new Error(data.erro);
@@ -613,9 +630,12 @@ async function carregarDados() {
             periodo: 'tudo'
           })
         });
-        const data12 = await res12.json();
+        const texto12 = await res12.text();
+        const data12 = JSON.parse(texto12);
         if (data12.ok) dadosCache12M = data12;
-      } catch(e) { /* segue mesmo se falhar */ }
+      } catch(e) {
+        console.warn('[Oliverfy] Falha ao carregar histórico 12 meses (gráficos de relatório ficarão vazios):', e.message);
+      }
     }
 
     renderizar();
