@@ -532,7 +532,23 @@ async function fazerLogin(event) {
       body: JSON.stringify({ email, senha_hash: senhaHash })
     });
 
-    const data = await res.json();
+    // Captura texto cru antes de parsear pra diagnóstico
+    const textoCru = await res.text();
+    let data;
+    try {
+      data = JSON.parse(textoCru);
+    } catch(e) {
+      console.error('[Oliverfy] Resposta inválida do /oliverfy-login:', {
+        status: res.status,
+        statusText: res.statusText,
+        corpo: textoCru.slice(0, 500)
+      });
+      throw new Error(
+        `Servidor de login respondeu inválido (status ${res.status}). ` +
+        `Corpo: "${textoCru.slice(0, 200) || '(vazio)'}"`
+      );
+    }
+
     if (!data.ok) throw new Error(data.erro || 'Email ou senha incorretos');
 
     // Salva sessão
