@@ -1053,6 +1053,23 @@ function fmt(v) {
   return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// Converte valor do Google Sheets (pode vir como "68,35", "68.35", "1.234,56", número) pra Number
+function parseValor(v) {
+  if (typeof v === 'number') return v;
+  if (!v) return 0;
+  let s = String(v).replace(/[R$\s]/g, '');
+  // Se tem vírgula, é formato BR: vírgula é decimal, ponto é milhar
+  // "1.234,56" -> "1234.56"
+  // "68,35" -> "68.35"
+  if (s.includes(',')) {
+    s = s.replace(/\./g, '').replace(',', '.');
+  }
+  // Se não tem vírgula, assume formato US/numérico: ponto é decimal
+  // "68.35" mantém, "1234" mantém
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
 function renderizar() {
   if (abaAtual === 'visao') renderVisao();
   if (abaAtual === 'transacoes') renderTransacoes();
@@ -1061,8 +1078,8 @@ function renderizar() {
 
 function renderVisao() {
   const d = dadosCache;
-  const totalRec = d.rendas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
-  const totalDesp = d.despesas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+  const totalRec = d.rendas.reduce((s, r) => s + (parseValor(r.valor) || 0), 0);
+  const totalDesp = d.despesas.reduce((s, r) => s + (parseValor(r.valor) || 0), 0);
 
   document.getElementById('cardReceitas').textContent = fmt(totalRec);
   document.getElementById('cardReceitasSub').textContent = `${d.rendas.length} ${d.rendas.length === 1 ? 'entrada' : 'entradas'}`;
@@ -1073,7 +1090,7 @@ function renderVisao() {
   // Maior gasto
   let maior = { valor: 0, descricao: '—' };
   d.despesas.forEach(g => {
-    const v = parseFloat(g.valor) || 0;
+    const v = parseValor(g.valor) || 0;
     if (v > maior.valor) maior = { valor: v, descricao: g.descricao || '—' };
   });
   document.getElementById('cardMaior').textContent = fmt(maior.valor);
@@ -1083,7 +1100,7 @@ function renderVisao() {
   const cats = {};
   d.despesas.forEach(g => {
     const c = g.categoria || 'Sem categoria';
-    cats[c] = (cats[c] || 0) + (parseFloat(g.valor) || 0);
+    cats[c] = (cats[c] || 0) + (parseValor(g.valor) || 0);
   });
   const catsArr = Object.entries(cats).sort((a, b) => b[1] - a[1]);
   const max = catsArr[0]?.[1] || 1;
@@ -1103,7 +1120,7 @@ function renderVisao() {
   const porDia = {};
   d.despesas.forEach(g => {
     const dt = g.data || '';
-    porDia[dt] = (porDia[dt] || 0) + (parseFloat(g.valor) || 0);
+    porDia[dt] = (porDia[dt] || 0) + (parseValor(g.valor) || 0);
   });
   const dias = Object.keys(porDia).sort((a, b) => {
     const [da, ma] = a.split('/'); const [db, mb] = b.split('/');
@@ -1213,7 +1230,7 @@ function renderPizzaCategorias(itens, campoCategoria, canvasId, chartVarName) {
   const agg = {};
   itens.forEach(it => {
     const c = (it[campoCategoria] || 'Sem categoria').trim() || 'Sem categoria';
-    agg[c] = (agg[c] || 0) + (parseFloat(it.valor) || 0);
+    agg[c] = (agg[c] || 0) + (parseValor(it.valor) || 0);
   });
   const entries = Object.entries(agg).sort((a, b) => b[1] - a[1]);
 
@@ -1269,13 +1286,13 @@ function renderSaldoMensal(despesas, rendas, chavesUltimos12) {
     const dt = parseDataBR(g.data);
     if (!dt) return;
     const k = chaveMes(dt);
-    if (k in despPorMes) despPorMes[k] += (parseFloat(g.valor) || 0);
+    if (k in despPorMes) despPorMes[k] += (parseValor(g.valor) || 0);
   });
   rendas.forEach(r => {
     const dt = parseDataBR(r.data);
     if (!dt) return;
     const k = chaveMes(dt);
-    if (k in rendPorMes) rendPorMes[k] += (parseFloat(r.valor) || 0);
+    if (k in rendPorMes) rendPorMes[k] += (parseValor(r.valor) || 0);
   });
 
   const labels = chavesUltimos12.map(labelMes);
@@ -1341,13 +1358,13 @@ function renderCompara6M(despesas, rendas, chavesUltimos12) {
     const dt = parseDataBR(g.data);
     if (!dt) return;
     const k = chaveMes(dt);
-    if (k in despPorMes) despPorMes[k] += (parseFloat(g.valor) || 0);
+    if (k in despPorMes) despPorMes[k] += (parseValor(g.valor) || 0);
   });
   rendas.forEach(r => {
     const dt = parseDataBR(r.data);
     if (!dt) return;
     const k = chaveMes(dt);
-    if (k in rendPorMes) rendPorMes[k] += (parseFloat(r.valor) || 0);
+    if (k in rendPorMes) rendPorMes[k] += (parseValor(r.valor) || 0);
   });
 
   const labels = chaves6.map(labelMes);
@@ -1424,7 +1441,7 @@ function renderTransacoes() {
             <td>${t.descricao || '—'}</td>
             <td>${t.categoria || t.origem || '—'}</td>
             <td style="text-align:right" class="${t.tipo === 'renda' ? 'amount-in' : 'amount-out'}">
-              ${t.tipo === 'renda' ? '+' : '-'} ${fmt(parseFloat(t.valor) || 0)}
+              ${t.tipo === 'renda' ? '+' : '-'} ${fmt(parseValor(t.valor) || 0)}
             </td>
           </tr>
         `).join('')}
@@ -1529,7 +1546,7 @@ function renderFixos() {
           <div style="font-weight:500;font-size:14px">${f.nome}</div>
           <div style="font-size:12px;color:var(--text2);margin-top:2px">Dia ${dia} · ${f.categoria || 'Outros'} ${badge ? ' · ' + badge : ''}</div>
         </div>
-        <div style="font-weight:600;font-size:16px">${fmt(parseFloat(f.valor) || 0)}</div>
+        <div style="font-weight:600;font-size:16px">${fmt(parseValor(f.valor) || 0)}</div>
       </div>`;
   }).join('')}</div>`;
 }
@@ -1681,7 +1698,7 @@ function renderRendasFixas() {
           <div style="font-weight:500;font-size:14px">${r.nome}</div>
           <div style="font-size:12px;color:var(--text2);margin-top:2px">Dia ${dia}${badge ? ' · ' + badge : ''}</div>
         </div>
-        <div style="font-weight:600;font-size:16px;color:var(--green)">${fmt(parseFloat(r.valor) || 0)}</div>
+        <div style="font-weight:600;font-size:16px;color:var(--green)">${fmt(parseValor(r.valor) || 0)}</div>
       </div>`;
   }).join('')}</div>`;
 }
@@ -1801,7 +1818,7 @@ function editarTransacao(t) {
   document.getElementById('transacaoLinha').value = t.linha;
   document.getElementById('transacaoData').value = converterDataBRParaISO(t.data);
   document.getElementById('transacaoDescricao').value = t.descricao || '';
-  document.getElementById('transacaoValor').value = parseFloat(t.valor) || 0;
+  document.getElementById('transacaoValor').value = parseValor(t.valor) || 0;
 
   // Popula categoria de acordo com tipo
   const selCat = document.getElementById('transacaoCategoria');
@@ -2014,7 +2031,7 @@ function calcularEDesenharPrevisibilidade() {
     cicloInicio = new Date(anoHoje, mesHoje, 1);
     cicloFim = new Date(anoHoje, mesHoje + 1, 0);
   } else {
-    const ancora = [...rendasAtivas].sort((a,b) => (parseFloat(b.valor)||0) - (parseFloat(a.valor)||0))[0];
+    const ancora = [...rendasAtivas].sort((a,b) => (parseValor(b.valor)||0) - (parseValor(a.valor)||0))[0];
     const diaCicloInicio = parseInt(ancora.dia_recebimento) || 1;
     if (diaHoje >= diaCicloInicio) {
       cicloInicio = new Date(anoHoje, mesHoje, diaCicloInicio);
@@ -2030,8 +2047,8 @@ function calcularEDesenharPrevisibilidade() {
   const diaDoCiclo = Math.round((hoje - cicloInicio) / msPorDia) + 1; // 1-indexado
 
   // ----- Totais -----
-  const totalRenda = rendasAtivas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
-  const totalFixos = fixosAtivos.reduce((s, f) => s + (parseFloat(f.valor) || 0), 0);
+  const totalRenda = rendasAtivas.reduce((s, r) => s + (parseValor(r.valor) || 0), 0);
+  const totalFixos = fixosAtivos.reduce((s, f) => s + (parseValor(f.valor) || 0), 0);
 
   // ----- Saldo do ciclo ANTERIOR (carrega pro ciclo atual) -----
   // Ciclo anterior = mesmo tamanho do atual, mas deslocado pra trás
@@ -2063,8 +2080,8 @@ function calcularEDesenharPrevisibilidade() {
     dt.setHours(0, 0, 0, 0);
     return dt >= cicloAnteriorInicio && dt <= cicloAnteriorFim;
   });
-  const totalDespAnt = despesasAnt.reduce((s, g) => s + (parseFloat(g.valor) || 0), 0);
-  const totalRendaAnt = rendasAnt.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+  const totalDespAnt = despesasAnt.reduce((s, g) => s + (parseValor(g.valor) || 0), 0);
+  const totalRendaAnt = rendasAnt.reduce((s, r) => s + (parseValor(r.valor) || 0), 0);
   // Saldo: o que recebeu menos o que gastou. Positivo = sobrou. Negativo = furou.
   const heranca = totalRendaAnt - totalDespAnt;
 
@@ -2086,9 +2103,9 @@ function calcularEDesenharPrevisibilidade() {
     const dt = parseDataBR(g.data);
     dt.setHours(0, 0, 0, 0);
     const diaCiclo = Math.round((dt - cicloInicio) / msPorDia) + 1;
-    gastosPorDia[diaCiclo] = (gastosPorDia[diaCiclo] || 0) + (parseFloat(g.valor) || 0);
+    gastosPorDia[diaCiclo] = (gastosPorDia[diaCiclo] || 0) + (parseValor(g.valor) || 0);
   });
-  const totalGastoCiclo = despesasCiclo.reduce((s, g) => s + (parseFloat(g.valor) || 0), 0);
+  const totalGastoCiclo = despesasCiclo.reduce((s, g) => s + (parseValor(g.valor) || 0), 0);
 
   // ----- Saldo acumulado dos dias passados (não inclui hoje) -----
   // Se sobrou: positivo (economizou). Se gastou demais: negativo (furou).
