@@ -173,6 +173,47 @@
     .dash-relatorios-header { margin: 2rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
     .dash-relatorios-title { font-size: 16px; font-weight: 600; color: var(--text); }
     .dash-relatorios-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+    /* PREVISIBILIDADE */
+    .prev-card-resumo { background: var(--green-light); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .prev-resumo-label { font-size: 13px; color: var(--green-dark); margin-bottom: 6px; font-weight: 500; }
+    .prev-resumo-cota { font-size: 36px; font-weight: 700; color: var(--green-deep); line-height: 1.1; }
+    .prev-resumo-cota.negativo { color: #A32D2D; }
+    .prev-resumo-sub { font-size: 13px; color: var(--green-dark); margin-top: 8px; }
+    .prev-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(15,110,86,0.2); }
+    .prev-stat-label { font-size: 11px; color: var(--green-dark); text-transform: uppercase; letter-spacing: 0.3px; font-weight: 500; }
+    .prev-stat-value { font-size: 16px; font-weight: 600; margin-top: 3px; color: var(--text); }
+    .prev-legenda { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 1rem; font-size: 12px; color: var(--text2); }
+    .prev-leg-item { display: inline-flex; align-items: center; gap: 5px; }
+    .prev-leg-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+    .leg-hoje { background: var(--green); }
+    .leg-futuro { background: var(--green-light); border: 1px solid var(--green); }
+    .leg-furou { background: #FCEBEB; border: 1px solid #E24B4A; }
+    .leg-ok { background: var(--surface); border: 1px solid var(--border2); }
+    .prev-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .prev-cal-head { font-size: 11px; color: var(--text2); text-align: center; padding: 4px 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.3px; }
+    .prev-cal-cell { aspect-ratio: 1; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; font-size: 11px; border: 1px solid var(--border); cursor: default; transition: transform 0.1s; }
+    .prev-cal-cell:hover { transform: scale(1.05); z-index: 2; }
+    .prev-cal-cell.empty { background: transparent; border: none; cursor: default; }
+    .prev-cal-cell.empty:hover { transform: none; }
+    .prev-cal-cell.ok { background: var(--surface); }
+    .prev-cal-cell.furou { background: #FCEBEB; border-color: #E24B4A; }
+    .prev-cal-cell.hoje { border: 2px solid var(--green); background: var(--green-light); }
+    .prev-cal-cell.futuro { background: var(--green-light); opacity: 0.7; }
+    .prev-cal-cell.aguardando { background: #FAEEDA; border-color: #EF9F27; }
+    .prev-cal-dia { font-weight: 700; font-size: 12px; color: var(--text); }
+    .prev-cal-cota { font-size: 10px; font-weight: 600; line-height: 1.2; word-break: break-word; }
+    .prev-cal-cell.ok .prev-cal-cota { color: var(--text2); }
+    .prev-cal-cell.furou .prev-cal-cota { color: #A32D2D; }
+    .prev-cal-cell.hoje .prev-cal-cota { color: var(--green-deep); }
+    .prev-cal-cell.futuro .prev-cal-cota { color: var(--green-dark); }
+    .prev-cal-cell.aguardando .prev-cal-cota { color: #854F0B; }
+    .prev-empty-state { text-align: center; padding: 3rem 1rem; color: var(--text2); }
+    .prev-empty-state .icone { font-size: 32px; margin-bottom: 12px; }
+    .prev-no-renda { background: #FAEEDA; border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; display: flex; gap: 12px; align-items: flex-start; }
+    .prev-no-renda-icon { font-size: 24px; flex-shrink: 0; }
+    .prev-no-renda-text { font-size: 13px; color: #854F0B; line-height: 1.5; }
+    .prev-no-renda-text strong { display: block; font-size: 14px; margin-bottom: 4px; }
     .list-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .list-item:last-child { border-bottom: none; }
     .list-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--border2); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
@@ -258,9 +299,11 @@
   <div class="dash-content">
     <div class="dash-tabs">
       <button class="dash-tab active" onclick="trocaTab('visao')" data-tab="visao">Visão geral</button>
+      <button class="dash-tab" onclick="trocaTab('previsibilidade')" data-tab="previsibilidade">Previsibilidade</button>
       <button class="dash-tab" onclick="trocaTab('transacoes')" data-tab="transacoes">Transações</button>
       <button class="dash-tab" onclick="trocaTab('lista')" data-tab="lista" id="btnTabLista">Lista de compras</button>
       <button class="dash-tab" onclick="trocaTab('fixos')" data-tab="fixos">Gastos fixos</button>
+      <button class="dash-tab" onclick="trocaTab('rendasfixas')" data-tab="rendasfixas">Renda fixa</button>
     </div>
 
     <div class="dash-filter-row" id="filterRow">
@@ -361,6 +404,65 @@
         <div id="fixosContent"></div>
       </div>
     </div>
+
+    <!-- RENDA FIXA -->
+    <div id="contentRendasFixas" style="display:none">
+      <div class="dash-box">
+        <div class="dash-box-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Minhas rendas fixas</span>
+          <button onclick="abrirModalRendaFixa()" style="background:var(--green);color:white;border:none;padding:8px 14px;border-radius:var(--radius);font:500 13px 'DM Sans';cursor:pointer">+ Adicionar</button>
+        </div>
+        <div id="rendasFixasContent"></div>
+      </div>
+      <div class="dash-box" style="margin-top:1rem">
+        <div class="dash-box-title">Como funciona</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">
+          Cadastre cada renda recorrente que você recebe (salário, freelas, aluguel recebido). O Oliverfy vai te avisar pelo WhatsApp no dia que deve cair, e quando você responder <strong>"recebi"</strong> a renda entra automaticamente. A <strong>maior renda</strong> é o que define o ciclo do seu mês na aba Previsibilidade.
+        </p>
+      </div>
+    </div>
+
+    <!-- PREVISIBILIDADE -->
+    <div id="tabPrevisibilidade" style="display:none">
+      <div class="prev-card-resumo">
+        <div class="prev-resumo-label">Você pode gastar hoje</div>
+        <div class="prev-resumo-cota" id="prevCotaHoje">R$ 0,00</div>
+        <div class="prev-resumo-sub" id="prevCotaSub">Calculando...</div>
+
+        <div class="prev-stats">
+          <div>
+            <div class="prev-stat-label">Renda do ciclo</div>
+            <div class="prev-stat-value" id="prevRenda">R$ 0,00</div>
+          </div>
+          <div>
+            <div class="prev-stat-label">Fixos do ciclo</div>
+            <div class="prev-stat-value" id="prevFixos">R$ 0,00</div>
+          </div>
+          <div>
+            <div class="prev-stat-label">Já gastei</div>
+            <div class="prev-stat-value" id="prevGasto">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-box">
+        <div class="dash-box-title" id="prevCalTitle">Cota diária</div>
+        <div class="prev-legenda">
+          <span class="prev-leg-item"><span class="prev-leg-dot leg-hoje"></span>Hoje</span>
+          <span class="prev-leg-item"><span class="prev-leg-dot leg-futuro"></span>Cota projetada</span>
+          <span class="prev-leg-item"><span class="prev-leg-dot leg-furou"></span>Furou a cota</span>
+          <span class="prev-leg-item"><span class="prev-leg-dot leg-ok"></span>Dentro da cota</span>
+        </div>
+        <div class="prev-cal-grid" id="prevCalGrid"></div>
+      </div>
+
+      <div class="dash-box" style="margin-top: 1rem;">
+        <div class="dash-box-title">Como funciona</div>
+        <p style="font-size: 13px; color: var(--text2); line-height: 1.6; margin: 0;">
+          Sua cota diária é calculada com base em: <strong>soma de todas as rendas fixas do ciclo</strong> menos <strong>todos os gastos fixos</strong> menos <strong>o que já gastou</strong>, dividido pelos dias restantes do ciclo. O <strong>ciclo começa no dia da sua maior renda fixa</strong> e termina um dia antes do próximo recebimento. Se você furar num dia, a cota dos próximos dias se ajusta sozinha. Se sobrar dinheiro num dia, ele se redistribui pra cima dos próximos.
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -409,6 +511,7 @@ const URL_LOGIN     = `${N8N_BASE}/webhook/oliverfy-login`;
 const URL_DADOS     = `${N8N_BASE}/webhook/oliverfy-dados`;
 const URL_TOGGLE    = `${N8N_BASE}/webhook/oliverfy-lista-toggle`;
 const URL_FIXOS     = `${N8N_BASE}/webhook/oliverfy-fixos`;
+const URL_RENDAS_FIXAS = `${N8N_BASE}/webhook/oliverfy-rendas-fixas`;
 
 let planoSelecionado = null;
 let valorSelecionado = null;
@@ -574,6 +677,10 @@ function logout() {
   usuarioLogado = null;
   dadosCache = null;
   dadosCache12M = null;
+  fixosCache = [];
+  rendasFixasCache = [];
+  fixosJaCarregadosPrev = false;
+  rendasFixasJaCarregadasPrev = false;
   document.getElementById('landing').classList.add('active');
   document.getElementById('dashboard').classList.remove('active');
 }
@@ -1231,16 +1338,441 @@ async function deletarFixo() {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════════════════
+// RENDAS FIXAS
+// ═══════════════════════════════════════════════════════════════════
+let rendasFixasCache = [];
+
+async function carregarRendasFixas() {
+  try {
+    const res = await fetch(URL_RENDAS_FIXAS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: 'listar'
+      })
+    });
+    const texto = await res.text();
+    let data;
+    try { data = JSON.parse(texto); }
+    catch(e) {
+      throw new Error(`Servidor respondeu inválido (status ${res.status}). Corpo: "${texto.slice(0,200) || '(vazio)'}"`);
+    }
+    if (!data.ok) {
+      if (data.erro === 'sessao_invalida') return logout();
+      throw new Error(data.erro);
+    }
+    rendasFixasCache = data.rendas || [];
+    renderRendasFixas();
+  } catch(e) {
+    document.getElementById('rendasFixasContent').innerHTML = '<div class="dash-empty">Erro ao carregar: ' + e.message + '</div>';
+  }
+}
+
+function renderRendasFixas() {
+  const el = document.getElementById('rendasFixasContent');
+  if (!rendasFixasCache.length) {
+    el.innerHTML = '<div class="dash-empty">Nenhuma renda fixa cadastrada<br><small>Clica em "+ Adicionar" para cadastrar seu salário, freelas ou aluguel recebido</small></div>';
+    return;
+  }
+  const hoje = new Date().getDate();
+  // Ordena por dia de recebimento crescente
+  const ordenadas = [...rendasFixasCache].sort((a,b) => (parseInt(a.dia_recebimento)||1) - (parseInt(b.dia_recebimento)||1));
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">${ordenadas.map(r => {
+    const dia = parseInt(r.dia_recebimento) || 1;
+    const ativo = (r.status || 'ativo') === 'ativo';
+    const diasAteReceber = dia >= hoje ? dia - hoje : (30 - hoje + dia);
+    let badge = '';
+    if (ativo) {
+      if (diasAteReceber === 0) badge = '<span style="background:var(--green-light);color:var(--green-dark);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Cai hoje</span>';
+      else if (diasAteReceber === 1) badge = '<span style="background:var(--green-light);color:var(--green-dark);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Cai amanhã</span>';
+      else if (diasAteReceber <= 5) badge = `<span style="background:var(--green-light);color:var(--green-dark);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Em ${diasAteReceber} dias</span>`;
+    } else {
+      badge = '<span style="background:var(--surface2);color:var(--text2);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500">Pausado</span>';
+    }
+    return `
+      <div onclick='editarRendaFixa(${JSON.stringify(r)})' style="background:var(--surface2);padding:14px 16px;border-radius:var(--radius);cursor:pointer;display:flex;justify-content:space-between;align-items:center;${!ativo ? 'opacity:0.6' : ''}">
+        <div>
+          <div style="font-weight:500;font-size:14px">${r.nome}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Dia ${dia}${badge ? ' · ' + badge : ''}</div>
+        </div>
+        <div style="font-weight:600;font-size:16px;color:var(--green)">${fmt(parseFloat(r.valor) || 0)}</div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+function abrirModalRendaFixa() {
+  document.getElementById('modalRendaTitulo').textContent = 'Nova renda fixa';
+  document.getElementById('formRenda').reset();
+  document.getElementById('rendaLinha').value = '';
+  document.getElementById('rendaStatusWrap').style.display = 'none';
+  document.getElementById('btnDeletarRenda').style.display = 'none';
+  document.getElementById('rendaError').classList.remove('show');
+  document.getElementById('modalRenda').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function editarRendaFixa(r) {
+  document.getElementById('modalRendaTitulo').textContent = 'Editar renda fixa';
+  document.getElementById('rendaLinha').value = r.linha;
+  document.getElementById('rendaNome').value = r.nome || '';
+  document.getElementById('rendaValor').value = r.valor || '';
+  document.getElementById('rendaDia').value = r.dia_recebimento || '';
+  document.getElementById('rendaStatus').value = r.status || 'ativo';
+  document.getElementById('rendaStatusWrap').style.display = 'block';
+  document.getElementById('btnDeletarRenda').style.display = 'block';
+  document.getElementById('rendaError').classList.remove('show');
+  document.getElementById('modalRenda').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalRendaFixa() {
+  document.getElementById('modalRenda').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function salvarRendaFixa(event) {
+  event.preventDefault();
+  const linha = document.getElementById('rendaLinha').value;
+  const renda = {
+    nome: document.getElementById('rendaNome').value.trim(),
+    valor: document.getElementById('rendaValor').value,
+    dia_recebimento: document.getElementById('rendaDia').value,
+    status: document.getElementById('rendaStatus').value || 'ativo'
+  };
+  if (linha) renda.linha = parseInt(linha);
+
+  try {
+    const res = await fetch(URL_RENDAS_FIXAS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: linha ? 'editar' : 'criar',
+        renda: renda
+      })
+    });
+    const texto = await res.text();
+    let data;
+    try { data = JSON.parse(texto); }
+    catch(e) {
+      throw new Error(`Servidor respondeu inválido (status ${res.status})`);
+    }
+    if (!data.ok) throw new Error(data.erro || 'Erro ao salvar');
+    fecharModalRendaFixa();
+    // Invalida cache de previsibilidade pra recalcular com nova renda
+    rendasFixasJaCarregadasPrev = false;
+    await carregarRendasFixas();
+  } catch(e) {
+    mostrarErro('rendaError', e.message);
+  }
+}
+
+async function deletarRendaFixa() {
+  if (!confirm('Tem certeza que quer excluir essa renda fixa?')) return;
+  const linha = document.getElementById('rendaLinha').value;
+  try {
+    const res = await fetch(URL_RENDAS_FIXAS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: 'deletar',
+        renda: { linha: parseInt(linha) }
+      })
+    });
+    const texto = await res.text();
+    let data;
+    try { data = JSON.parse(texto); }
+    catch(e) {
+      throw new Error(`Servidor respondeu inválido (status ${res.status})`);
+    }
+    if (!data.ok) throw new Error(data.erro || 'Erro ao excluir');
+    fecharModalRendaFixa();
+    rendasFixasJaCarregadasPrev = false;
+    await carregarRendasFixas();
+  } catch(e) {
+    mostrarErro('rendaError', e.message);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
+// PREVISIBILIDADE
+// ═══════════════════════════════════════════════════════════════════
+let fixosJaCarregadosPrev = false;
+let rendasFixasJaCarregadasPrev = false;
+
+async function renderPrevisibilidade() {
+  const el = document.getElementById('prevCalGrid');
+
+  // Precisa do dadosCache12M (gastos do histórico)
+  if (!dadosCache12M) {
+    el.innerHTML = '<div class="prev-empty-state"><div class="icone">⏳</div>Carregando histórico...</div>';
+    setTimeout(renderPrevisibilidade, 500);
+    return;
+  }
+
+  // Carrega gastos fixos
+  if (!fixosJaCarregadosPrev) {
+    try {
+      const res = await fetch(URL_FIXOS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'listar', email: usuarioLogado.email, token: usuarioLogado.token })
+      });
+      const texto = await res.text();
+      const data = JSON.parse(texto);
+      fixosCache = (data.ok && data.fixos) ? data.fixos : [];
+    } catch(e) {
+      console.warn('[Oliverfy] Falha ao carregar fixos:', e.message);
+    }
+    fixosJaCarregadosPrev = true;
+  }
+
+  // Carrega rendas fixas
+  if (!rendasFixasJaCarregadasPrev) {
+    try {
+      const res = await fetch(URL_RENDAS_FIXAS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'listar', email: usuarioLogado.email, token: usuarioLogado.token })
+      });
+      const texto = await res.text();
+      const data = JSON.parse(texto);
+      rendasFixasCache = (data.ok && data.rendas) ? data.rendas : [];
+    } catch(e) {
+      console.warn('[Oliverfy] Falha ao carregar rendas fixas:', e.message);
+    }
+    rendasFixasJaCarregadasPrev = true;
+  }
+
+  calcularEDesenharPrevisibilidade();
+}
+
+function calcularEDesenharPrevisibilidade() {
+  const elGrid = document.getElementById('prevCalGrid');
+
+  // Filtra rendas/fixos ATIVOS
+  const rendasAtivas = (rendasFixasCache || []).filter(r => {
+    const s = String(r.status || 'ativo').toLowerCase().trim();
+    return s === 'ativo' || s === '' || s === 'sim';
+  });
+  const fixosAtivos = (fixosCache || []).filter(f => {
+    const s = String(f.status || 'ativo').toLowerCase().trim();
+    return s === 'ativo' || s === '' || s === 'sim';
+  });
+
+  // ----- Determina o ciclo -----
+  const hoje = new Date();
+  const anoHoje = hoje.getFullYear();
+  const mesHoje = hoje.getMonth(); // 0-11
+  const diaHoje = hoje.getDate();
+
+  let cicloInicio, cicloFim, diaCicloInicio;
+
+  if (rendasAtivas.length === 0) {
+    // Sem renda fixa cadastrada: usa mês civil
+    cicloInicio = new Date(anoHoje, mesHoje, 1);
+    cicloFim = new Date(anoHoje, mesHoje + 1, 0); // último dia do mês
+    diaCicloInicio = 1;
+  } else {
+    // Identifica maior renda fixa = âncora do ciclo
+    const ancora = [...rendasAtivas].sort((a,b) => (parseFloat(b.valor)||0) - (parseFloat(a.valor)||0))[0];
+    diaCicloInicio = parseInt(ancora.dia_recebimento) || 1;
+
+    // Ciclo começa no dia da âncora; se hoje já passou, ciclo é deste mês até próximo recebimento
+    if (diaHoje >= diaCicloInicio) {
+      cicloInicio = new Date(anoHoje, mesHoje, diaCicloInicio);
+      cicloFim = new Date(anoHoje, mesHoje + 1, diaCicloInicio - 1);
+    } else {
+      cicloInicio = new Date(anoHoje, mesHoje - 1, diaCicloInicio);
+      cicloFim = new Date(anoHoje, mesHoje, diaCicloInicio - 1);
+    }
+  }
+
+  // Total de dias do ciclo
+  const msPorDia = 1000 * 60 * 60 * 24;
+  const totalDiasCiclo = Math.round((cicloFim - cicloInicio) / msPorDia) + 1;
+
+  // Dia que estamos NO CICLO (1-indexado)
+  const diaDoCiclo = Math.round((hoje - cicloInicio) / msPorDia) + 1;
+  const diasRestantes = totalDiasCiclo - diaDoCiclo + 1;
+
+  // ----- Soma das rendas fixas (entram inteiras no ciclo, independente de já ter caído) -----
+  const totalRenda = rendasAtivas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+
+  // ----- Soma dos gastos fixos -----
+  const totalFixos = fixosAtivos.reduce((s, f) => s + (parseFloat(f.valor) || 0), 0);
+
+  // ----- Despesas variáveis dentro do ciclo -----
+  const despesasCiclo = (dadosCache12M.despesas || []).filter(g => {
+    const dt = parseDataBR(g.data);
+    if (!dt) return false;
+    return dt >= cicloInicio && dt <= cicloFim;
+  });
+  // Agrega por dia do ciclo (1-indexado)
+  const gastosPorDiaCiclo = {};
+  despesasCiclo.forEach(g => {
+    const dt = parseDataBR(g.data);
+    const diaCiclo = Math.round((dt - cicloInicio) / msPorDia) + 1;
+    gastosPorDiaCiclo[diaCiclo] = (gastosPorDiaCiclo[diaCiclo] || 0) + (parseFloat(g.valor) || 0);
+  });
+  const totalGastoCiclo = despesasCiclo.reduce((s, g) => s + (parseFloat(g.valor) || 0), 0);
+
+  // Gastos até ontem (pra cota de hoje)
+  let gastoAteOntem = 0;
+  for (let d = 1; d < diaDoCiclo; d++) {
+    gastoAteOntem += (gastosPorDiaCiclo[d] || 0);
+  }
+
+  // ----- Cota de hoje -----
+  const saldoRestante = totalRenda - totalFixos - gastoAteOntem;
+  const cotaHoje = diasRestantes > 0 ? saldoRestante / diasRestantes : 0;
+
+  // ----- Card resumo -----
+  const elCota = document.getElementById('prevCotaHoje');
+  const elSub = document.getElementById('prevCotaSub');
+  elCota.textContent = fmt(cotaHoje);
+  elCota.classList.toggle('negativo', cotaHoje < 0);
+
+  if (rendasAtivas.length === 0) {
+    elSub.textContent = `Cadastre suas rendas fixas para um cálculo mais preciso`;
+  } else if (cotaHoje < 0) {
+    elSub.textContent = `Já passou do limite do ciclo • restam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
+  } else {
+    elSub.textContent = `Sem furar o ciclo • restam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
+  }
+
+  document.getElementById('prevRenda').textContent = fmt(totalRenda);
+  document.getElementById('prevFixos').textContent = fmt(totalFixos);
+  document.getElementById('prevGasto').textContent = fmt(totalGastoCiclo);
+
+  // Título dinâmico do calendário
+  const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const tituloCiclo = rendasAtivas.length === 0
+    ? `Cota diária — ${meses[mesHoje]}/${anoHoje}`
+    : `Ciclo: ${String(cicloInicio.getDate()).padStart(2,'0')}/${meses[cicloInicio.getMonth()]} → ${String(cicloFim.getDate()).padStart(2,'0')}/${meses[cicloFim.getMonth()]}`;
+  document.getElementById('prevCalTitle').textContent = tituloCiclo;
+
+  // ----- Aviso amigável quando sem renda fixa -----
+  // Remove aviso antigo se existir
+  const avisoAntigo = document.getElementById('prevNoRendaAviso');
+  if (avisoAntigo) avisoAntigo.remove();
+  if (rendasAtivas.length === 0) {
+    const aviso = document.createElement('div');
+    aviso.id = 'prevNoRendaAviso';
+    aviso.className = 'prev-no-renda';
+    aviso.innerHTML = `
+      <div class="prev-no-renda-icon">💡</div>
+      <div class="prev-no-renda-text">
+        <strong>Cadastre suas rendas fixas</strong>
+        Sem rendas fixas, o cálculo usa o mês civil. Vai pra aba <strong>"Renda fixa"</strong> e cadastra seu salário — o ciclo passa a girar no dia do seu pagamento.
+      </div>`;
+    const card = document.querySelector('.prev-card-resumo');
+    card.parentNode.insertBefore(aviso, card);
+  }
+
+  // ----- Calcula cota dia a dia do ciclo -----
+  const cotaPorDiaCiclo = {};
+  let saldoSimulado = totalRenda - totalFixos;
+  for (let d = 1; d <= totalDiasCiclo; d++) {
+    const diasRest = totalDiasCiclo - d + 1;
+    cotaPorDiaCiclo[d] = diasRest > 0 ? saldoSimulado / diasRest : 0;
+    saldoSimulado -= (gastosPorDiaCiclo[d] || 0);
+  }
+
+  // ----- Renderiza calendário (cada célula = 1 dia do ciclo) -----
+  // Como o ciclo pode atravessar meses, vamos mostrar cada dia com sua data real
+  const cells = [];
+  // Header com dias da semana
+  ['D','S','T','Q','Q','S','S'].forEach(d => {
+    cells.push(`<div class="prev-cal-head">${d}</div>`);
+  });
+  // Quantos vazios antes do primeiro dia do ciclo
+  const primeiroDiaSemana = cicloInicio.getDay(); // 0=Dom..6=Sáb
+  for (let i = 0; i < primeiroDiaSemana; i++) {
+    cells.push(`<div class="prev-cal-cell empty"></div>`);
+  }
+
+  for (let d = 1; d <= totalDiasCiclo; d++) {
+    const dataDia = new Date(cicloInicio.getTime() + (d - 1) * msPorDia);
+    const cota = cotaPorDiaCiclo[d];
+    const gasto = gastosPorDiaCiclo[d] || 0;
+    let cls = '';
+    let cotaText = '';
+    let title = '';
+
+    if (d < diaDoCiclo) {
+      // Dia passado
+      if (gasto > cota && cota > 0) {
+        cls = 'furou';
+        const excesso = gasto - cota;
+        cotaText = '−' + fmt(excesso);
+        title = `Cota era ${fmt(cota)} • Gastou ${fmt(gasto)} • Furou ${fmt(excesso)}`;
+      } else if (gasto > 0) {
+        cls = 'ok';
+        cotaText = fmt(gasto);
+        title = `Gastou ${fmt(gasto)} (cota era ${fmt(cota)})`;
+      } else {
+        cls = 'ok';
+        cotaText = '—';
+        title = `Sem gastos (cota era ${fmt(cota)})`;
+      }
+    } else if (d === diaDoCiclo) {
+      if (cota < 0) {
+        cls = 'aguardando';
+        cotaText = fmt(cota);
+        title = 'Cota negativa: já passou do limite do ciclo';
+      } else {
+        cls = 'hoje';
+        cotaText = fmt(cota);
+        title = `Você pode gastar até ${fmt(cota)} hoje`;
+      }
+    } else {
+      // Dia futuro
+      if (cota < 0) {
+        cls = 'aguardando';
+        cotaText = fmt(cota);
+        title = 'Projeção negativa';
+      } else {
+        cls = 'futuro';
+        cotaText = fmt(cota);
+        title = `Cota projetada: ${fmt(cota)}`;
+      }
+    }
+
+    cells.push(`
+      <div class="prev-cal-cell ${cls}" title="${title}">
+        <span class="prev-cal-dia">${dataDia.getDate()}/${String(dataDia.getMonth()+1).padStart(2,'0')}</span>
+        <span class="prev-cal-cota">${cotaText}</span>
+      </div>
+    `);
+  }
+
+  elGrid.innerHTML = cells.join('');
+}
+
+
 function trocaTab(tab) {
   abaAtual = tab;
   document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
   document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
   document.getElementById('tabVisao').style.display = tab === 'visao' ? 'block' : 'none';
+  document.getElementById('tabPrevisibilidade').style.display = tab === 'previsibilidade' ? 'block' : 'none';
   document.getElementById('tabTransacoes').style.display = tab === 'transacoes' ? 'block' : 'none';
   document.getElementById('contentLista').style.display = tab === 'lista' ? 'block' : 'none';
   document.getElementById('contentFixos').style.display = tab === 'fixos' ? 'block' : 'none';
-  document.getElementById('filterRow').style.display = (tab === 'lista' || tab === 'fixos') ? 'none' : 'flex';
+  document.getElementById('contentRendasFixas').style.display = tab === 'rendasfixas' ? 'block' : 'none';
+  document.getElementById('filterRow').style.display = (tab === 'lista' || tab === 'fixos' || tab === 'rendasfixas' || tab === 'previsibilidade') ? 'none' : 'flex';
   if (tab === 'fixos') carregarFixos();
+  else if (tab === 'rendasfixas') carregarRendasFixas();
+  else if (tab === 'previsibilidade') renderPrevisibilidade();
   else if (dadosCache) renderizar();
 }
 
@@ -1319,6 +1851,30 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <button type="submit" class="modal-btn" id="btnSalvarFixo">Salvar</button>
       <button type="button" class="modal-btn" id="btnDeletarFixo" style="background:var(--red);display:none;margin-top:8px" onclick="deletarFixo()">Excluir gasto</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL RENDA FIXA -->
+<div class="modal-bg" id="modalRenda">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModalRendaFixa()">×</button>
+    <h2 id="modalRendaTitulo">Nova renda fixa</h2>
+    <p class="modal-sub">Cadastre recebimentos recorrentes (salário, freela, aluguel recebido)</p>
+    <div class="error-msg" id="rendaError"></div>
+    <form id="formRenda" onsubmit="salvarRendaFixa(event)">
+      <input type="hidden" id="rendaLinha" />
+      <div class="field"><label>Nome da renda</label><input type="text" id="rendaNome" required placeholder="Salário, freela, aluguel recebido..." /></div>
+      <div class="field"><label>Valor (R$)</label><input type="number" id="rendaValor" required step="0.01" min="0" placeholder="3000" /></div>
+      <div class="field"><label>Dia do recebimento</label><input type="number" id="rendaDia" required min="1" max="31" placeholder="5" /><div class="field-hint">Se cair em fim de semana, o sistema avisa no dia mesmo</div></div>
+      <div class="field" id="rendaStatusWrap" style="display:none"><label>Status</label>
+        <select id="rendaStatus" style="width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--radius);font:14px 'DM Sans';background:var(--surface);color:var(--text)">
+          <option value="ativo">Ativo</option>
+          <option value="pausado">Pausado</option>
+        </select>
+      </div>
+      <button type="submit" class="modal-btn" id="btnSalvarRenda">Salvar</button>
+      <button type="button" class="modal-btn" id="btnDeletarRenda" style="background:var(--red);display:none;margin-top:8px" onclick="deletarRendaFixa()">Excluir renda</button>
     </form>
   </div>
 </div>
