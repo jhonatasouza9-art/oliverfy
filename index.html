@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#1D9E75" />
   <title>Oliverfy — Gestão Financeira pelo WhatsApp</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon.png" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Oliverfy" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="Anote gastos, rendas e listas de compras no WhatsApp. Dashboard completo, previsibilidade de orçamento e lembretes automáticos." />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -158,6 +169,29 @@
     .cta-final .hero-cta { font-size: 16px; padding: 16px 32px; }
     .cta-trust { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem; font-size: 13px; color: var(--text3); }
     .cta-trust span { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* ===== PWA Install Banner ===== */
+    .pwa-banner {
+      position: fixed; bottom: 16px; left: 16px; right: 16px;
+      max-width: 480px; margin: 0 auto;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 14px; padding: 14px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      display: none; align-items: center; gap: 12px;
+      z-index: 9999; animation: slideUp 0.3s ease;
+    }
+    .pwa-banner.show { display: flex; }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .pwa-banner img { width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0; }
+    .pwa-banner-text { flex: 1; min-width: 0; }
+    .pwa-banner-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+    .pwa-banner-sub { font-size: 12px; color: var(--text2); }
+    .pwa-banner-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .pwa-banner-btn { padding: 8px 14px; font-size: 13px; font-weight: 500; border-radius: 8px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+    .pwa-banner-btn.primary { background: var(--green); color: white; }
+    .pwa-banner-btn.primary:hover { background: var(--green-dark); }
+    .pwa-banner-btn.ghost { background: transparent; color: var(--text2); }
+    .pwa-banner-btn.ghost:hover { color: var(--text); }
 
     /* MODAL */
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100; }
@@ -2339,6 +2373,80 @@ document.addEventListener('DOMContentLoaded', () => {
     </form>
   </div>
 </div>
+
+<!-- PWA Install Banner (Android/Chrome) -->
+<div class="pwa-banner" id="pwaBanner">
+  <img src="/icons/icon-192.png" alt="Oliverfy" />
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Instale o Oliverfy</div>
+    <div class="pwa-banner-sub">Acesso direto pela tela inicial</div>
+  </div>
+  <div class="pwa-banner-actions">
+    <button class="pwa-banner-btn ghost" onclick="dispensarPWABanner()">Agora não</button>
+    <button class="pwa-banner-btn primary" onclick="instalarPWA()">Instalar</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// PWA — Service Worker + Install Banner
+// ═══════════════════════════════════════════════════════════════════
+let deferredPrompt = null;
+
+// Registra service worker (só em HTTPS ou localhost)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('[PWA] Service worker registrado:', reg.scope))
+      .catch(err => console.warn('[PWA] Falha registro SW:', err));
+  });
+}
+
+// Captura evento beforeinstallprompt (Chrome/Edge/Android)
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Mostra banner se usuário não dispensou recentemente
+  const dismissedAt = localStorage.getItem('pwaBannerDismissed');
+  const hoje = Date.now();
+  // Re-mostra após 7 dias
+  if (!dismissedAt || (hoje - parseInt(dismissedAt)) > 7 * 24 * 60 * 60 * 1000) {
+    // Pequeno delay pra não ser agressivo na primeira impressão
+    setTimeout(() => {
+      document.getElementById('pwaBanner').classList.add('show');
+    }, 4000);
+  }
+});
+
+async function instalarPWA() {
+  if (!deferredPrompt) {
+    // iOS Safari: instrução manual
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      alert('No iPhone: toque no botão de compartilhar (□↑) e escolha "Adicionar à Tela de Início".');
+    } else {
+      alert('Use o menu do navegador (⋮) e escolha "Instalar app" ou "Adicionar à tela inicial".');
+    }
+    return;
+  }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log('[PWA] Escolha do usuário:', outcome);
+  deferredPrompt = null;
+  document.getElementById('pwaBanner').classList.remove('show');
+}
+
+function dispensarPWABanner() {
+  document.getElementById('pwaBanner').classList.remove('show');
+  localStorage.setItem('pwaBannerDismissed', Date.now().toString());
+}
+
+// Detecta se já está instalado
+window.addEventListener('appinstalled', () => {
+  console.log('[PWA] App instalado!');
+  document.getElementById('pwaBanner').classList.remove('show');
+  deferredPrompt = null;
+});
+</script>
 
 </body>
 </html>
