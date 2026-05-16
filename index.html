@@ -536,6 +536,7 @@ const URL_DADOS     = `${N8N_BASE}/webhook/oliverfy-dados`;
 const URL_TOGGLE    = `${N8N_BASE}/webhook/oliverfy-lista-toggle`;
 const URL_FIXOS     = `${N8N_BASE}/webhook/oliverfy-fixos`;
 const URL_RENDAS_FIXAS = `${N8N_BASE}/webhook/oliverfy-rendas-fixas`;
+const URL_TRANSACOES = `${N8N_BASE}/webhook/oliverfy-transacoes`;
 
 let planoSelecionado = null;
 let valorSelecionado = null;
@@ -1144,8 +1145,8 @@ function renderCompara6M(despesas, rendas, chavesUltimos12) {
 function renderTransacoes() {
   const d = dadosCache;
   const tudo = [
-    ...d.despesas.map(t => ({...t, tipo: 'despesa'})),
-    ...d.rendas.map(t => ({...t, tipo: 'renda'}))
+    ...d.despesas.map((t, i) => ({...t, tipo: 'despesa', _idx_array: i})),
+    ...d.rendas.map((t, i) => ({...t, tipo: 'renda', _idx_array: i}))
   ].sort((a, b) => {
     const [da, ma] = (a.data || '').split('/'); const [db, mb] = (b.data || '').split('/');
     return new Date(`2026-${mb}-${db}`) - new Date(`2026-${ma}-${da}`);
@@ -1161,10 +1162,10 @@ function renderTransacoes() {
       <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th style="text-align:right">Valor</th></tr></thead>
       <tbody>
         ${tudo.map(t => `
-          <tr>
+          <tr onclick='editarTransacao(${JSON.stringify(t).replace(/'/g, "&apos;")})' style="cursor:pointer">
             <td>${t.data || '—'}</td>
             <td>${t.descricao || '—'}</td>
-            <td>${t.categoria || '—'}</td>
+            <td>${t.categoria || t.origem || '—'}</td>
             <td style="text-align:right" class="${t.tipo === 'renda' ? 'amount-in' : 'amount-out'}">
               ${t.tipo === 'renda' ? '+' : '-'} ${fmt(parseFloat(t.valor) || 0)}
             </td>
@@ -1522,6 +1523,156 @@ async function deletarRendaFixa() {
     await carregarRendasFixas();
   } catch(e) {
     mostrarErro('rendaError', e.message);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
+// EDIÇÃO DE TRANSAÇÕES (despesas e rendas variáveis)
+// ═══════════════════════════════════════════════════════════════════
+
+const CATEGORIAS_DESPESA = ['Alimentação', 'Casa', 'Transporte', 'Saúde', 'Lazer', 'Educação', 'Assinaturas', 'Vestuário', 'Mercado', 'Outros'];
+const CATEGORIAS_RENDA = ['Salário', 'Freelance', 'Investimentos', 'Vendas', 'Renda fixa', 'Presente', 'Outros'];
+
+function editarTransacao(t) {
+  if (!t.linha) {
+    alert('Não foi possível identificar a linha desta transação. Atualize a página e tente novamente.');
+    return;
+  }
+  document.getElementById('formTransacao').reset();
+  document.getElementById('transacaoTipo').value = t.tipo;
+  document.getElementById('transacaoLinha').value = t.linha;
+  document.getElementById('transacaoData').value = converterDataBRParaISO(t.data);
+  document.getElementById('transacaoDescricao').value = t.descricao || '';
+  document.getElementById('transacaoValor').value = parseFloat(t.valor) || 0;
+
+  // Popula categoria de acordo com tipo
+  const selCat = document.getElementById('transacaoCategoria');
+  const opcoes = t.tipo === 'renda' ? CATEGORIAS_RENDA : CATEGORIAS_DESPESA;
+  const valorAtual = t.categoria || t.origem || 'Outros';
+  selCat.innerHTML = opcoes.map(c => `<option value="${c}">${c}</option>`).join('');
+  // Se a categoria atual não está nas opções, adiciona
+  if (!opcoes.includes(valorAtual) && valorAtual && valorAtual !== '—') {
+    selCat.innerHTML = `<option value="${valorAtual}">${valorAtual}</option>` + selCat.innerHTML;
+  }
+  selCat.value = valorAtual;
+
+  // Campo extra: Forma_Pagamento (despesa) OU Origem (renda)
+  const labelExtra = document.getElementById('transacaoExtraLabel');
+  const inputExtra = document.getElementById('transacaoExtra');
+  if (t.tipo === 'renda') {
+    labelExtra.textContent = 'Origem (opcional)';
+    inputExtra.placeholder = 'Salário, pix recebido, etc';
+    inputExtra.value = t.origem || '';
+  } else {
+    labelExtra.textContent = 'Forma de pagamento (opcional)';
+    inputExtra.placeholder = 'Pix, cartão, dinheiro';
+    inputExtra.value = t.forma_pagamento || '';
+  }
+
+  // Título do modal
+  document.getElementById('modalTransacaoTitulo').textContent =
+    t.tipo === 'renda' ? 'Editar renda' : 'Editar despesa';
+
+  document.getElementById('transacaoError').classList.remove('show');
+  document.getElementById('modalTransacao').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function converterDataBRParaISO(dataBR) {
+  // "DD/MM/AAAA" → "AAAA-MM-DD" para input type="date"
+  if (!dataBR) return '';
+  const partes = dataBR.split('/');
+  if (partes.length !== 3) return '';
+  return `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+}
+
+function converterDataISOParaBR(dataISO) {
+  // "AAAA-MM-DD" → "DD/MM/AAAA"
+  if (!dataISO) return '';
+  const partes = dataISO.split('-');
+  if (partes.length !== 3) return '';
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function fecharModalTransacao() {
+  document.getElementById('modalTransacao').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function salvarTransacao(event) {
+  event.preventDefault();
+  const tipo = document.getElementById('transacaoTipo').value;
+  const linha = parseInt(document.getElementById('transacaoLinha').value);
+  const transacao = {
+    linha,
+    data: converterDataISOParaBR(document.getElementById('transacaoData').value),
+    descricao: document.getElementById('transacaoDescricao').value.trim(),
+    valor: parseFloat(document.getElementById('transacaoValor').value) || 0,
+    categoria: document.getElementById('transacaoCategoria').value
+  };
+  // Campo extra
+  const extra = document.getElementById('transacaoExtra').value.trim();
+  if (tipo === 'renda') transacao.origem = extra;
+  else transacao.forma_pagamento = extra;
+
+  try {
+    const res = await fetch(URL_TRANSACOES, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: tipo === 'renda' ? 'editar_renda' : 'editar_despesa',
+        transacao
+      })
+    });
+    const texto = await res.text();
+    let data;
+    try { data = JSON.parse(texto); }
+    catch(e) { throw new Error(`Servidor respondeu inválido (status ${res.status})`); }
+    if (!data.ok) {
+      if (data.erro === 'sessao_invalida') return logout();
+      throw new Error(data.erro || 'Erro ao salvar');
+    }
+    fecharModalTransacao();
+    // Invalida caches pra recarregar
+    dadosCache12M = null;
+    await carregarDados();
+  } catch(e) {
+    mostrarErro('transacaoError', e.message);
+  }
+}
+
+async function deletarTransacao() {
+  if (!confirm('Tem certeza que quer excluir essa transação?')) return;
+  const tipo = document.getElementById('transacaoTipo').value;
+  const linha = parseInt(document.getElementById('transacaoLinha').value);
+
+  try {
+    const res = await fetch(URL_TRANSACOES, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: usuarioLogado.email,
+        token: usuarioLogado.token,
+        acao: tipo === 'renda' ? 'deletar_renda' : 'deletar_despesa',
+        transacao: { linha }
+      })
+    });
+    const texto = await res.text();
+    let data;
+    try { data = JSON.parse(texto); }
+    catch(e) { throw new Error(`Servidor respondeu inválido (status ${res.status})`); }
+    if (!data.ok) {
+      if (data.erro === 'sessao_invalida') return logout();
+      throw new Error(data.erro || 'Erro ao excluir');
+    }
+    fecharModalTransacao();
+    dadosCache12M = null;
+    await carregarDados();
+  } catch(e) {
+    mostrarErro('transacaoError', e.message);
   }
 }
 
@@ -1938,6 +2089,30 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <button type="submit" class="modal-btn" id="btnSalvarRenda">Salvar</button>
       <button type="button" class="modal-btn" id="btnDeletarRenda" style="background:var(--red);display:none;margin-top:8px" onclick="deletarRendaFixa()">Excluir renda</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL TRANSAÇÃO -->
+<div class="modal-bg" id="modalTransacao">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModalTransacao()">×</button>
+    <h2 id="modalTransacaoTitulo">Editar transação</h2>
+    <p class="modal-sub">Ajuste os dados ou exclua a transação</p>
+    <div class="error-msg" id="transacaoError"></div>
+    <form id="formTransacao" onsubmit="salvarTransacao(event)">
+      <input type="hidden" id="transacaoTipo" />
+      <input type="hidden" id="transacaoLinha" />
+      <div class="field"><label>Data</label><input type="date" id="transacaoData" required /></div>
+      <div class="field"><label>Descrição</label><input type="text" id="transacaoDescricao" required placeholder="O que foi essa transação?" /></div>
+      <div class="field"><label>Valor (R$)</label><input type="number" id="transacaoValor" required step="0.01" min="0" placeholder="0,00" /></div>
+      <div class="field"><label>Categoria</label>
+        <select id="transacaoCategoria" style="width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--radius);font:14px 'DM Sans';background:var(--surface);color:var(--text)">
+        </select>
+      </div>
+      <div class="field"><label id="transacaoExtraLabel">Forma de pagamento (opcional)</label><input type="text" id="transacaoExtra" placeholder="Pix, cartão, dinheiro" /></div>
+      <button type="submit" class="modal-btn">Salvar alterações</button>
+      <button type="button" class="modal-btn" style="background:var(--red);margin-top:8px" onclick="deletarTransacao()">Excluir transação</button>
     </form>
   </div>
 </div>
