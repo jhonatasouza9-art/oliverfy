@@ -164,6 +164,15 @@
     .amount-out { color: var(--orange); font-weight: 500; }
     .amount-in { color: var(--green); font-weight: 500; }
     .chart-wrap { position: relative; height: 220px; }
+    .chart-wrap-pizza { height: 260px; }
+    .chart-wrap-linha { height: 280px; }
+    .chart-wrap-barras { height: 280px; }
+    .dash-box-full { margin-bottom: 1.5rem; }
+    .dash-row-pizzas { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 768px) { .dash-row-pizzas { grid-template-columns: 1fr; } }
+    .dash-relatorios-header { margin: 2rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .dash-relatorios-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    .dash-relatorios-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
     .list-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .list-item:last-child { border-bottom: none; }
     .list-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--border2); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
@@ -297,6 +306,33 @@
           <div class="chart-wrap"><canvas id="chartGastos"></canvas></div>
         </div>
       </div>
+
+      <!-- BLOCO RELATÓRIOS (últimos 12 meses, independente do filtro) -->
+      <div class="dash-relatorios-header">
+        <div class="dash-relatorios-title">Relatórios — últimos 12 meses</div>
+        <div class="dash-relatorios-sub">Estes gráficos mostram o histórico completo e não são afetados pelo filtro acima</div>
+      </div>
+
+      <div class="dash-row dash-row-pizzas">
+        <div class="dash-box">
+          <div class="dash-box-title">Despesas por categoria</div>
+          <div class="chart-wrap chart-wrap-pizza"><canvas id="chartPizzaDespesas"></canvas></div>
+        </div>
+        <div class="dash-box">
+          <div class="dash-box-title">Rendas por origem</div>
+          <div class="chart-wrap chart-wrap-pizza"><canvas id="chartPizzaRendas"></canvas></div>
+        </div>
+      </div>
+
+      <div class="dash-box dash-box-full">
+        <div class="dash-box-title">Saldo mensal (rendas − despesas)</div>
+        <div class="chart-wrap chart-wrap-linha"><canvas id="chartSaldoMensal"></canvas></div>
+      </div>
+
+      <div class="dash-box dash-box-full">
+        <div class="dash-box-title">Rendas vs despesas — últimos 6 meses</div>
+        <div class="chart-wrap chart-wrap-barras"><canvas id="chartComparaSemestre"></canvas></div>
+      </div>
     </div>
 
     <!-- TRANSAÇÕES -->
@@ -378,9 +414,14 @@ let planoSelecionado = null;
 let valorSelecionado = null;
 let usuarioLogado = null;
 let dadosCache = null;
+let dadosCache12M = null;
 let periodoAtual = 'mes';
 let abaAtual = 'visao';
 let chartInstance = null;
+let chartPizzaDesp = null;
+let chartPizzaRend = null;
+let chartSaldoMensal = null;
+let chartCompara6M = null;
 
 // ═══════════════════════════════════════════════════════════════════
 // CRIPTOGRAFIA (SHA-256)
@@ -516,6 +557,7 @@ function logout() {
   localStorage.removeItem('oliverfy_session');
   usuarioLogado = null;
   dadosCache = null;
+  dadosCache12M = null;
   document.getElementById('landing').classList.add('active');
   document.getElementById('dashboard').classList.remove('active');
 }
@@ -558,6 +600,24 @@ async function carregarDados() {
       throw new Error(data.erro);
     }
     dadosCache = data;
+
+    // Carrega cache de 12 meses uma única vez (pra gráficos de relatório)
+    if (!dadosCache12M) {
+      try {
+        const res12 = await fetch(URL_DADOS, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: usuarioLogado.email,
+            token: usuarioLogado.token,
+            periodo: 'tudo'
+          })
+        });
+        const data12 = await res12.json();
+        if (data12.ok) dadosCache12M = data12;
+      } catch(e) { /* segue mesmo se falhar */ }
+    }
+
     renderizar();
   } catch(e) {
     alert('Erro ao carregar dados: ' + e.message);
@@ -644,6 +704,271 @@ function renderVisao() {
       scales: {
         x: { grid: { display: false } },
         y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => 'R$ ' + v } }
+      }
+    }
+  });
+
+  // Renderiza relatórios de 12 meses (independente do filtro de período)
+  renderRelatorios12M();
+}
+
+// ========== RELATÓRIOS 12 MESES ==========
+
+// Converte "DD/MM/AAAA" em Date local (sem chumbar ano)
+function parseDataBR(s) {
+  if (!s) return null;
+  const partes = s.split('/');
+  if (partes.length !== 3) return null;
+  const dia = parseInt(partes[0], 10);
+  const mes = parseInt(partes[1], 10);
+  let ano = parseInt(partes[2], 10);
+  if (ano < 100) ano += 2000;
+  if (isNaN(dia) || isNaN(mes) || isNaN(ano)) return null;
+  return new Date(ano, mes - 1, dia);
+}
+
+// Retorna chave "AAAA-MM" pra agregação mensal
+function chaveMes(date) {
+  return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0');
+}
+
+// Formata "AAAA-MM" em "mmm/AA" pra label do gráfico
+function labelMes(chave) {
+  const [ano, mes] = chave.split('-');
+  const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return meses[parseInt(mes, 10) - 1] + '/' + ano.slice(2);
+}
+
+// Gera N cores HSL distintas e legíveis em light/dark
+function gerarCores(n) {
+  const cores = [];
+  // Começa no verde Oliverfy (~160°) e rotaciona
+  const baseHue = 160;
+  for (let i = 0; i < n; i++) {
+    const hue = (baseHue + i * (360 / Math.max(n, 6))) % 360;
+    cores.push(`hsl(${hue}, 55%, 55%)`);
+  }
+  return cores;
+}
+
+function renderRelatorios12M() {
+  const d = dadosCache12M;
+  if (!d || !d.despesas || !d.rendas) {
+    // Cache ainda não chegou — tenta de novo em 500ms
+    setTimeout(renderRelatorios12M, 500);
+    return;
+  }
+
+  // Define janela: últimos 12 meses cheios (incluindo o atual)
+  const hoje = new Date();
+  const chavesUltimos12 = [];
+  for (let i = 11; i >= 0; i--) {
+    const dt = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    chavesUltimos12.push(chaveMes(dt));
+  }
+  const setUltimos12 = new Set(chavesUltimos12);
+
+  // Filtra despesas e rendas pra dentro da janela de 12 meses
+  const despesas12 = d.despesas.filter(g => {
+    const dt = parseDataBR(g.data);
+    return dt && setUltimos12.has(chaveMes(dt));
+  });
+  const rendas12 = d.rendas.filter(g => {
+    const dt = parseDataBR(g.data);
+    return dt && setUltimos12.has(chaveMes(dt));
+  });
+
+  renderPizzaCategorias(despesas12, 'categoria', 'chartPizzaDespesas', 'chartPizzaDesp');
+  renderPizzaCategorias(rendas12, 'origem', 'chartPizzaRendas', 'chartPizzaRend');
+  renderSaldoMensal(despesas12, rendas12, chavesUltimos12);
+  renderCompara6M(despesas12, rendas12, chavesUltimos12);
+}
+
+function renderPizzaCategorias(itens, campoCategoria, canvasId, chartVarName) {
+  const agg = {};
+  itens.forEach(it => {
+    const c = (it[campoCategoria] || 'Sem categoria').trim() || 'Sem categoria';
+    agg[c] = (agg[c] || 0) + (parseFloat(it.valor) || 0);
+  });
+  const entries = Object.entries(agg).sort((a, b) => b[1] - a[1]);
+
+  // Destrói instância anterior se existir
+  if (window[chartVarName]) window[chartVarName].destroy();
+
+  const ctx = document.getElementById(canvasId).getContext('2d');
+
+  if (!entries.length) {
+    window[chartVarName] = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels: ['Sem dados'], datasets: [{ data: [1], backgroundColor: ['#E5E4E0'], borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+    });
+    return;
+  }
+
+  const labels = entries.map(e => e[0]);
+  const valores = entries.map(e => e[1]);
+  const cores = gerarCores(labels.length);
+  const corTexto = getComputedStyle(document.documentElement).getPropertyValue('--text2').trim() || '#5F5E5A';
+
+  window[chartVarName] = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: valores, backgroundColor: cores, borderWidth: 2, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#fff' }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'right', labels: { color: corTexto, font: { family: 'DM Sans', size: 12 }, boxWidth: 12, padding: 10 } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const total = valores.reduce((s, v) => s + v, 0);
+              const pct = total > 0 ? (ctx.parsed / total * 100).toFixed(1) : 0;
+              return `${ctx.label}: ${fmt(ctx.parsed)} (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderSaldoMensal(despesas, rendas, chavesUltimos12) {
+  // Agrega por mês
+  const despPorMes = {};
+  const rendPorMes = {};
+  chavesUltimos12.forEach(k => { despPorMes[k] = 0; rendPorMes[k] = 0; });
+
+  despesas.forEach(g => {
+    const dt = parseDataBR(g.data);
+    if (!dt) return;
+    const k = chaveMes(dt);
+    if (k in despPorMes) despPorMes[k] += (parseFloat(g.valor) || 0);
+  });
+  rendas.forEach(r => {
+    const dt = parseDataBR(r.data);
+    if (!dt) return;
+    const k = chaveMes(dt);
+    if (k in rendPorMes) rendPorMes[k] += (parseFloat(r.valor) || 0);
+  });
+
+  const labels = chavesUltimos12.map(labelMes);
+  const saldos = chavesUltimos12.map(k => rendPorMes[k] - despPorMes[k]);
+
+  if (chartSaldoMensal) chartSaldoMensal.destroy();
+  const ctx = document.getElementById('chartSaldoMensal').getContext('2d');
+  const corTexto = getComputedStyle(document.documentElement).getPropertyValue('--text2').trim() || '#5F5E5A';
+  const verde = '#1D9E75';
+  const vermelho = '#D14343';
+
+  chartSaldoMensal = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Saldo',
+        data: saldos,
+        borderColor: verde,
+        backgroundColor: 'rgba(29, 158, 117, 0.1)',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: saldos.map(v => v < 0 ? vermelho : verde),
+        pointBorderColor: saldos.map(v => v < 0 ? vermelho : verde),
+        tension: 0.3,
+        fill: true,
+        segment: {
+          borderColor: ctx => (ctx.p0.parsed.y < 0 || ctx.p1.parsed.y < 0) ? vermelho : verde
+        }
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => 'Saldo: ' + fmt(ctx.parsed.y)
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: corTexto, font: { family: 'DM Sans' } } },
+        y: {
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          ticks: { color: corTexto, font: { family: 'DM Sans' }, callback: v => 'R$ ' + v.toLocaleString('pt-BR') }
+        }
+      }
+    }
+  });
+}
+
+function renderCompara6M(despesas, rendas, chavesUltimos12) {
+  // Pega só os 6 últimos meses
+  const chaves6 = chavesUltimos12.slice(-6);
+  const despPorMes = {};
+  const rendPorMes = {};
+  chaves6.forEach(k => { despPorMes[k] = 0; rendPorMes[k] = 0; });
+
+  despesas.forEach(g => {
+    const dt = parseDataBR(g.data);
+    if (!dt) return;
+    const k = chaveMes(dt);
+    if (k in despPorMes) despPorMes[k] += (parseFloat(g.valor) || 0);
+  });
+  rendas.forEach(r => {
+    const dt = parseDataBR(r.data);
+    if (!dt) return;
+    const k = chaveMes(dt);
+    if (k in rendPorMes) rendPorMes[k] += (parseFloat(r.valor) || 0);
+  });
+
+  const labels = chaves6.map(labelMes);
+  const dadosRendas = chaves6.map(k => rendPorMes[k]);
+  const dadosDespesas = chaves6.map(k => despPorMes[k]);
+
+  if (chartCompara6M) chartCompara6M.destroy();
+  const ctx = document.getElementById('chartComparaSemestre').getContext('2d');
+  const corTexto = getComputedStyle(document.documentElement).getPropertyValue('--text2').trim() || '#5F5E5A';
+
+  chartCompara6M = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Rendas',
+          data: dadosRendas,
+          backgroundColor: '#1D9E75',
+          borderRadius: 4
+        },
+        {
+          label: 'Despesas',
+          data: dadosDespesas,
+          backgroundColor: '#D14343',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { color: corTexto, font: { family: 'DM Sans', size: 13 }, boxWidth: 12, padding: 10 } },
+        tooltip: {
+          callbacks: {
+            label: ctx => ctx.dataset.label + ': ' + fmt(ctx.parsed.y)
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: corTexto, font: { family: 'DM Sans' } } },
+        y: {
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          ticks: { color: corTexto, font: { family: 'DM Sans' }, callback: v => 'R$ ' + v.toLocaleString('pt-BR') }
+        }
       }
     }
   });
