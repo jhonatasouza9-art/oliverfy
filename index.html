@@ -295,7 +295,14 @@
     </div>
   </section>
 
-  <footer class="footer">© 2026 Oliverfy. Feito com 💚 no Brasil.</footer>
+  <footer class="footer">
+    <div style="margin-bottom: 8px;">
+      <a href="/sobre.html" style="color: var(--text2); text-decoration: none; margin: 0 8px;">Sobre</a>·
+      <a href="/termos-de-uso.html" style="color: var(--text2); text-decoration: none; margin: 0 8px;">Termos de Uso</a>·
+      <a href="/privacidade.html" style="color: var(--text2); text-decoration: none; margin: 0 8px;">Privacidade</a>
+    </div>
+    © 2026 Oliverfy. Feito com 💚 no Brasil.
+  </footer>
 </div>
 
 <!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════════ -->
@@ -504,6 +511,10 @@
       <div class="field"><label>E-mail</label><input type="email" id="cadEmail" required placeholder="seu@email.com" autocomplete="email" /></div>
       <div class="field"><label>WhatsApp (com DDD)</label><input type="tel" id="cadWhatsapp" required placeholder="21999999999" autocomplete="tel" /></div>
       <div class="field"><label>Senha</label><input type="password" id="cadSenha" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password" /><div class="field-hint">Você vai usar essa senha para acessar o dashboard</div></div>
+      <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text2); margin: 8px 0 16px; cursor: pointer; line-height: 1.5;">
+        <input type="checkbox" id="cadAceiteTermos" required style="margin-top: 3px; cursor: pointer; flex-shrink: 0;" />
+        <span>Li e concordo com os <a href="/termos-de-uso.html" target="_blank" style="color: var(--green); font-weight: 500;">Termos de Uso</a> e a <a href="/privacidade.html" target="_blank" style="color: var(--green); font-weight: 500;">Política de Privacidade</a>.</span>
+      </label>
       <button type="submit" class="modal-btn">Continuar para pagamento →</button>
     </form>
   </div>
@@ -522,6 +533,9 @@
       <div class="field"><label>Senha</label><input type="password" id="loginSenha" required autocomplete="current-password" /></div>
       <button type="submit" class="modal-btn">Entrar →</button>
     </form>
+    <p style="text-align: center; margin-top: 16px; font-size: 12px; color: var(--text3);">
+      Ao entrar, você concorda com nossos <a href="/termos-de-uso.html" target="_blank" style="color: var(--text2);">Termos</a> e <a href="/privacidade.html" target="_blank" style="color: var(--text2);">Política de Privacidade</a>.
+    </p>
   </div>
 </div>
 

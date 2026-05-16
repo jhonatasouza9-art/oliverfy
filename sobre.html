@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sobre o Oliverfy — Gestão financeira por WhatsApp" />
+  <title>Sobre — Oliverfy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #1D9E75;
+      --green-light: #E1F5EE;
+      --green-dark: #0F6E56;
+      --bg: #F5F4F0;
+      --surface: #FFFFFF;
+      --surface2: #F8F7F4;
+      --border: rgba(0,0,0,0.08);
+      --text: #1A1A18;
+      --text2: #5F5E5A;
+      --text3: #9A9892;
+      --radius: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0F0F0E;
+        --surface: #1A1A18;
+        --surface2: #222220;
+        --border: rgba(255,255,255,0.07);
+        --text: #F0EFE8;
+        --text2: #A8A69E;
+        --text3: #6A6860;
+        --green-light: #0D3D2A;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; line-height: 1.6; }
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; max-width: 800px; margin: 0 auto; }
+    .logo { font-weight: 700; font-size: 20px; color: var(--text); text-decoration: none; }
+    .logo em { color: var(--green); font-style: normal; }
+    .nav-back { font-size: 14px; color: var(--text2); text-decoration: none; padding: 8px 14px; border-radius: 8px; transition: background 0.15s; }
+    .nav-back:hover { background: var(--surface2); }
+    main { max-width: 800px; margin: 0 auto; padding: 24px; }
+    .doc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 32px; }
+    h1 { font-size: 36px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .subtitle { color: var(--text2); font-size: 17px; margin-bottom: 32px; }
+    h2 { font-size: 22px; font-weight: 600; color: var(--green-dark); margin-top: 40px; margin-bottom: 14px; }
+    p { margin-bottom: 16px; color: var(--text); font-size: 16px; }
+    strong { font-weight: 600; }
+    .empresa-box { background: var(--surface2); border-left: 3px solid var(--green); padding: 20px 22px; margin: 32px 0; border-radius: 6px; font-size: 14px; }
+    .empresa-box p { margin-bottom: 6px; }
+    .empresa-box strong { color: var(--green-dark); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 32px 0; }
+    .stat { background: var(--surface2); padding: 20px 18px; border-radius: var(--radius); text-align: center; }
+    .stat-num { font-size: 24px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .stat-label { font-size: 13px; color: var(--text2); }
+    .cta-box { background: var(--green-light); padding: 24px 28px; border-radius: var(--radius); margin: 32px 0; text-align: center; }
+    .cta-box h3 { color: var(--green-dark); font-size: 18px; margin-bottom: 8px; }
+    .cta-box p { margin-bottom: 16px; color: var(--text); }
+    .cta-btn { display: inline-block; background: var(--green); color: white; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; transition: background 0.15s; }
+    .cta-btn:hover { background: var(--green-dark); }
+    a { color: var(--green-dark); text-decoration: underline; }
+    footer { text-align: center; padding: 24px; color: var(--text3); font-size: 13px; }
+    @media (max-width: 600px) {
+      main { padding: 16px; }
+      .doc-card { padding: 28px 22px; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="logo">oliv<em>er</em>fy</a>
+    <a href="/" class="nav-back">← Voltar ao site</a>
+  </nav>
+  <main>
+    <article class="doc-card">
+      <h1>Sobre o Oliverfy</h1>
+      <p class="subtitle">A maneira mais simples de cuidar do seu dinheiro: sem planilhas, sem apps confusos, só uma conversa.</p>
+
+      <h2>O que é o Oliverfy</h2>
+      <p>O Oliverfy é uma plataforma de gestão financeira pessoal que funciona <strong>onde você já está</strong>: no WhatsApp.</p>
+      <p>Em vez de baixar mais um app, decorar onde clicar e abandonar em 3 dias, você simplesmente conversa com a gente — manda "gastei 50 no mercado" ou "recebi 3000 de salário", e tudo é registrado, categorizado e organizado automaticamente.</p>
+      <p>Para quem prefere visualizar o panorama completo, oferecemos um <strong>dashboard web</strong> com gráficos, previsibilidade de orçamento, listas de compras e gestão de gastos e rendas fixas.</p>
+
+      <h2>Por que existimos</h2>
+      <p>A maioria das pessoas <strong>não controla suas finanças</strong> não por falta de vontade — mas porque os aplicativos disponíveis são complicados, exigem disciplina diária e quebram a primeira vez que você esquece de abrir.</p>
+      <p>Acreditamos que controle financeiro deveria ser tão fácil quanto mandar uma mensagem. O Oliverfy nasceu dessa ideia.</p>
+
+      <h2>O que oferecemos</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">💬</div>
+          <div class="stat-label">Conversa via WhatsApp com agente de IA</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">📊</div>
+          <div class="stat-label">Dashboard com gráficos completos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">🔔</div>
+          <div class="stat-label">Lembretes automáticos de contas</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">📅</div>
+          <div class="stat-label">Previsibilidade de orçamento mensal</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">🛒</div>
+          <div class="stat-label">Lista de compras inteligente</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">🎙️</div>
+          <div class="stat-label">Registro por mensagem de voz</div>
+        </div>
+      </div>
+
+      <h2>Quem está por trás</h2>
+      <p>O Oliverfy é desenvolvido e operado por <strong>Jhonata Souza de Oliveira Silva</strong>, fundador e operador da plataforma.</p>
+
+      <div class="empresa-box">
+        <p><strong>Operadora do serviço:</strong></p>
+        <p>47.446.252 JHONATA SOUZA DE OLIVEIRA SILVA</p>
+        <p>CNPJ 47.446.252/0001-02</p>
+        <p>Estrada do Rio Grande, 2351 — Rio de Janeiro/RJ — CEP 22743-211</p>
+        <p>Contato: <a href="mailto:jhonatasouza9@gmail.com">jhonatasouza9@gmail.com</a></p>
+      </div>
+
+      <h2>Nosso compromisso</h2>
+      <p>Acreditamos em <strong>transparência total</strong>:</p>
+      <ul>
+        <li>Não vendemos seus dados, nunca;</li>
+        <li>Não exibimos anúncios;</li>
+        <li>Não há pegadinhas no preço — você assina, paga, usa, cancela quando quiser;</li>
+        <li>Suporte humano de verdade, respondendo no email que você vê na página de contato;</li>
+        <li>Seus dados financeiros são seus — você pode exportar tudo a qualquer momento.</li>
+      </ul>
+
+      <div class="cta-box">
+        <h3>Pronto para começar?</h3>
+        <p>Experimente o Oliverfy e descubra como controlar suas finanças pode ser simples.</p>
+        <a href="/" class="cta-btn">Conhecer planos</a>
+      </div>
+    </article>
+
+    <footer>
+      <p>© 2026 Oliverfy · <a href="/" style="color: var(--text2)">Voltar ao site</a> · <a href="/termos-de-uso.html" style="color: var(--text2)">Termos de Uso</a> · <a href="/privacidade.html" style="color: var(--text2)">Privacidade</a></p>
+    </footer>
+  </main>
+</body>
+</html>
