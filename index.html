@@ -95,6 +95,70 @@
     .how-item p { font-size: 14px; color: var(--text2); }
     .footer { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 3rem; text-align: center; color: var(--text3); font-size: 13px; border-top: 1px solid var(--border); }
 
+    /* ===== LANDING NOVA — seções adicionais ===== */
+    .hero-visual { max-width: 1100px; margin: 0 auto 4rem; padding: 0 1.5rem; }
+    .hero-mockup { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; box-shadow: 0 20px 50px rgba(29, 158, 117, 0.12); display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+    @media (max-width: 768px) { .hero-mockup { grid-template-columns: 1fr; padding: 16px; } }
+    .mockup-chat { background: #E5DDD5; border-radius: 14px; padding: 20px 16px; min-height: 320px; display: flex; flex-direction: column; gap: 10px; }
+    @media (prefers-color-scheme: dark) { .mockup-chat { background: #0F1419; } }
+    .mockup-msg { max-width: 80%; padding: 8px 12px; border-radius: 8px; font-size: 14px; line-height: 1.4; }
+    .mockup-msg.user { background: #DCF8C6; color: #111; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .mockup-msg.bot { background: #FFFFFF; color: #111; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+    @media (prefers-color-scheme: dark) { .mockup-msg.bot { background: #1F2C34; color: #E9EDF0; } .mockup-msg.user { background: #005C4B; color: #E9EDF0; } }
+    .mockup-msg .time { font-size: 10px; color: rgba(0,0,0,0.4); display: block; text-align: right; margin-top: 2px; }
+    @media (prefers-color-scheme: dark) { .mockup-msg .time { color: rgba(255,255,255,0.5); } }
+    .mockup-dash { background: var(--surface2); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+    .mockup-dash-title { font-size: 13px; color: var(--text2); font-weight: 500; }
+    .mockup-card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mockup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+    .mockup-card-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+    .mockup-card-value { font-size: 18px; font-weight: 700; color: var(--text); }
+    .mockup-card-value.green { color: var(--green); }
+    .mockup-card-value.red { color: #C0392B; }
+    .mockup-bar { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+    .mockup-bar-label { width: 70px; color: var(--text2); flex-shrink: 0; }
+    .mockup-bar-track { flex: 1; height: 6px; background: var(--surface); border-radius: 4px; overflow: hidden; }
+    .mockup-bar-fill { height: 100%; background: var(--green); border-radius: 4px; }
+    .mockup-bar-value { width: 50px; text-align: right; font-weight: 600; color: var(--text); }
+
+    .pain { max-width: 900px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .pain h2 { text-align: center; font-size: clamp(24px, 4vw, 32px); font-weight: 600; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
+    .pain-sub { text-align: center; color: var(--text2); font-size: 16px; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .pain-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; transition: transform 0.15s; }
+    .pain-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .pain-icon { font-size: 28px; margin-bottom: 0.75rem; display: block; }
+    .pain-item h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+    .pain-item p { font-size: 14px; color: var(--text2); line-height: 1.55; }
+
+    .benefits { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem; background: var(--surface2); border-radius: 24px; }
+    .benefits h2 { text-align: center; font-size: clamp(24px, 4vw, 32px); font-weight: 600; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
+    .benefits-sub { text-align: center; color: var(--text2); font-size: 16px; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; max-width: 1000px; margin: 0 auto; }
+    .benefit { background: var(--surface); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); }
+    .benefit-icon { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; background: var(--green-light); border-radius: 10px; color: var(--green-dark); font-size: 20px; margin-bottom: 0.85rem; }
+    .benefit h3 { font-size: 15px; font-weight: 600; margin-bottom: 0.4rem; color: var(--text); }
+    .benefit p { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+    .faq { max-width: 800px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .faq h2 { text-align: center; font-size: clamp(24px, 4vw, 32px); font-weight: 600; margin-bottom: 3rem; letter-spacing: -0.5px; }
+    .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.75rem; overflow: hidden; }
+    .faq-q { padding: 1.25rem 1.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-weight: 500; font-size: 15px; user-select: none; }
+    .faq-q::after { content: "+"; font-size: 22px; color: var(--green); font-weight: 400; flex-shrink: 0; transition: transform 0.2s; }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; padding: 0 1.5rem; }
+    .faq-item.open .faq-a { max-height: 400px; padding: 0 1.5rem 1.25rem; }
+    .faq-a p { font-size: 14px; color: var(--text2); line-height: 1.6; margin: 0; }
+    .faq-a a { color: var(--green); text-decoration: underline; }
+
+    .cta-final { max-width: 700px; margin: 0 auto; padding: 4rem 1.5rem; text-align: center; }
+    .cta-final h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 700; margin-bottom: 1rem; letter-spacing: -1px; }
+    .cta-final h2 em { color: var(--green); font-style: normal; }
+    .cta-final p { font-size: 16px; color: var(--text2); margin-bottom: 2rem; }
+    .cta-final .hero-cta { font-size: 16px; padding: 16px 32px; }
+    .cta-trust { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem; font-size: 13px; color: var(--text3); }
+    .cta-trust span { display: inline-flex; align-items: center; gap: 6px; }
+
     /* MODAL */
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100; }
     .modal-bg.open { display: flex; }
@@ -248,34 +312,133 @@
     <div class="nav-login" onclick="abrirLogin()">Entrar →</div>
   </nav>
 
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-badge"><span>💬</span> Suas finanças no WhatsApp</div>
-    <h1>Controle suas finanças<br>com uma <em>mensagem</em>.</h1>
-    <p>Anote gastos, rendas e listas de compras conversando no WhatsApp. Sem planilhas complicadas, sem apps pesados. Tudo organizado pra você.</p>
+    <h1>No fim do mês,<br>você <em>sabe</em> pra onde foi cada real.</h1>
+    <p>Acabou o mês e você não sabe pra onde o dinheiro foi? O Oliverfy é o organizador financeiro que você opera só conversando no WhatsApp. Sem planilha, sem app pesado, sem decorar onde clicar.</p>
     <a href="#planos" class="hero-cta">Começar agora →</a>
   </section>
 
-  <section class="how">
-    <h2>Como funciona</h2>
-    <div class="how-grid">
-      <div class="how-item"><div class="how-number">1</div><h3>Você se cadastra</h3><p>Escolhe o plano, paga com cartão e pronto. Em segundos seu acesso está ativo.</p></div>
-      <div class="how-item"><div class="how-number">2</div><h3>Conversa pelo WhatsApp</h3><p>"Gastei 50 no mercado", "Recebi 3000 de salário". Simples assim.</p></div>
-      <div class="how-item"><div class="how-number">3</div><h3>Acompanha tudo aqui</h3><p>Dashboard completo com gráficos, categorias e lista de compras.</p></div>
+  <!-- MOCKUP HERO: WhatsApp + Dashboard lado a lado -->
+  <section class="hero-visual">
+    <div class="hero-mockup">
+      <!-- Mockup do WhatsApp -->
+      <div class="mockup-chat">
+        <div class="mockup-msg user">Gastei 47 no mercado<span class="time">14:32</span></div>
+        <div class="mockup-msg bot">✅ Anotado!<br>💸 R$ 47,00 · Alimentação · Mercado<br>📊 Você gastou R$ 312 em alimentação este mês<span class="time">14:32</span></div>
+        <div class="mockup-msg user">Quanto sobra hoje?<span class="time">14:33</span></div>
+        <div class="mockup-msg bot">Sua cota de hoje é <b>R$ 89,40</b> 💰<br>Você ainda tem R$ 1.450 pro restante do mês.<span class="time">14:33</span></div>
+        <div class="mockup-msg user">🎙️ áudio · 12s<span class="time">14:34</span></div>
+        <div class="mockup-msg bot">🎧 Entendi! Lançando R$ 130 de farmácia.<span class="time">14:34</span></div>
+      </div>
+      <!-- Mockup do Dashboard -->
+      <div class="mockup-dash">
+        <div class="mockup-dash-title">📊 Resumo do mês</div>
+        <div class="mockup-card-row">
+          <div class="mockup-card">
+            <div class="mockup-card-label">Saldo</div>
+            <div class="mockup-card-value green">R$ 1.450</div>
+          </div>
+          <div class="mockup-card">
+            <div class="mockup-card-label">Gastei</div>
+            <div class="mockup-card-value red">R$ 1.872</div>
+          </div>
+        </div>
+        <div class="mockup-dash-title" style="margin-top: 6px">Por categoria</div>
+        <div class="mockup-bar"><span class="mockup-bar-label">Alimentação</span><div class="mockup-bar-track"><div class="mockup-bar-fill" style="width: 72%"></div></div><span class="mockup-bar-value">R$ 487</span></div>
+        <div class="mockup-bar"><span class="mockup-bar-label">Transporte</span><div class="mockup-bar-track"><div class="mockup-bar-fill" style="width: 48%"></div></div><span class="mockup-bar-value">R$ 320</span></div>
+        <div class="mockup-bar"><span class="mockup-bar-label">Lazer</span><div class="mockup-bar-track"><div class="mockup-bar-fill" style="width: 32%"></div></div><span class="mockup-bar-value">R$ 215</span></div>
+        <div class="mockup-bar"><span class="mockup-bar-label">Casa</span><div class="mockup-bar-track"><div class="mockup-bar-fill" style="width: 28%"></div></div><span class="mockup-bar-value">R$ 188</span></div>
+      </div>
     </div>
   </section>
 
+  <!-- DOR -->
+  <section class="pain">
+    <h2>Você se reconhece?</h2>
+    <p class="pain-sub">Se uma dessas situações te incomoda, o Oliverfy foi feito pra você.</p>
+    <div class="pain-grid">
+      <div class="pain-item">
+        <span class="pain-icon">🤷</span>
+        <h3>Acaba o mês e a conta tá no zero</h3>
+        <p>Você recebe, paga as contas, e quando vê, sumiu tudo. Não sabe explicar pra onde foi o dinheiro. De novo.</p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-icon">📝</span>
+        <h3>Já tentou planilha, app, caderno…</h3>
+        <p>No 3º dia, parou de anotar. Toda ferramenta exige disciplina pra abrir, pra clicar, pra categorizar. Cansa.</p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-icon">💸</span>
+        <h3>Quer guardar dinheiro, mas não consegue</h3>
+        <p>Você sabe que precisa começar a investir, montar reserva, sair de dívida. Mas sem ver pra onde o dinheiro vai, fica sempre na promessa.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="how">
+    <h2>Como funciona</h2>
+    <div class="how-grid">
+      <div class="how-item"><div class="how-number">1</div><h3>Cadastro em 1 minuto</h3><p>Escolhe o plano, paga, e o Oliverfy ativa na hora. Você recebe um WhatsApp dando boas-vindas.</p></div>
+      <div class="how-item"><div class="how-number">2</div><h3>Conversa pelo WhatsApp</h3><p>"Gastei 50 no mercado." "Recebi 3000." Sem categorizar, sem clicar — o Oliverfy entende e organiza tudo.</p></div>
+      <div class="how-item"><div class="how-number">3</div><h3>Vê tudo organizado</h3><p>Acessa o dashboard quando quiser. Gráficos, previsibilidade, lembretes de contas. Pronto pra usar.</p></div>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS / DIFERENCIAIS -->
+  <section class="benefits">
+    <h2>Por que o Oliverfy</h2>
+    <p class="benefits-sub">A diferença entre tentar de novo e finalmente conseguir.</p>
+    <div class="benefits-grid">
+      <div class="benefit">
+        <div class="benefit-icon">💬</div>
+        <h3>WhatsApp já está aberto</h3>
+        <p>Você não precisa baixar nada, lembrar de abrir, ou se cadastrar em mais um app. O Oliverfy está no único app que você já usa todo dia.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🧠</div>
+        <h3>Categoriza sozinho</h3>
+        <p>"Gastei 80 no Uber" já vira Transporte. "Recebi 3000 de salário" já vira renda. Você não precisa decidir nada.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🎙️</div>
+        <h3>Manda áudio também</h3>
+        <p>Na pressa? Manda um áudio de 10 segundos. O Oliverfy transcreve, entende e lança. (Plano Pro)</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📅</div>
+        <h3>Cota diária inteligente</h3>
+        <p>Te diz quanto pode gastar HOJE pra não furar o mês. Se gastar a menos, redistribui automaticamente nos próximos dias.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🔔</div>
+        <h3>Lembra das suas contas</h3>
+        <p>Aluguel, internet, cartão. O Oliverfy te avisa no dia certo. Responde "paguei" e ele já lança a despesa.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📊</div>
+        <h3>Você vê o que aconteceu</h3>
+        <p>Dashboard com gráficos por categoria, evolução do mês, saldo previsto. Tudo o que uma planilha bonita te daria, sem o trabalho.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANOS -->
   <section class="plans" id="planos">
     <h2>Escolha seu plano</h2>
-    <p class="plans-sub">Cancele quando quiser. Sem taxas escondidas.</p>
+    <p class="plans-sub">Cancele quando quiser. Sem taxas escondidas. Garantia de 7 dias.</p>
     <div class="plans-grid">
       <div class="plan">
         <div class="plan-name">Básico</div>
         <div class="plan-price"><span class="currency">R$</span><span class="value">19</span><span class="period">/mês</span></div>
         <ul class="plan-features">
-          <li>Registro de gastos pelo WhatsApp</li>
-          <li>Registro de rendas</li>
-          <li>Dashboard com gráficos</li>
+          <li>Registro de gastos e rendas pelo WhatsApp</li>
+          <li>Dashboard completo com gráficos</li>
           <li>Categorização automática</li>
+          <li>Gastos fixos com lembretes</li>
+          <li>Previsibilidade de orçamento</li>
         </ul>
         <button class="plan-btn" onclick="abrirCadastro('Básico', 19)">Assinar Básico</button>
       </div>
@@ -285,13 +448,59 @@
         <div class="plan-price"><span class="currency">R$</span><span class="value">29</span><span class="period">/mês</span></div>
         <ul class="plan-features">
           <li>Tudo do Básico</li>
-          <li>Lista de compras inteligente</li>
+          <li><b>Registro por áudio</b> no WhatsApp</li>
+          <li><b>Lista de compras inteligente</b></li>
           <li>Análise mensal por categoria</li>
           <li>Histórico ilimitado</li>
           <li>Suporte prioritário</li>
         </ul>
         <button class="plan-btn" onclick="abrirCadastro('Pro', 29)">Assinar Pro</button>
       </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Perguntas frequentes</h2>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Posso cancelar quando quiser?</div>
+      <div class="faq-a"><p>Sim. Você cancela enviando um email pro nosso suporte e mantém acesso até o fim do ciclo já pago. Sem multa, sem fidelidade.</p></div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">E se eu não gostar?</div>
+      <div class="faq-a"><p>Você tem <b>7 dias de garantia de reembolso integral</b>, contados a partir do pagamento (direito do CDC). Mandou email avisando no prazo, devolvemos 100% do valor.</p></div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Preciso instalar algum aplicativo?</div>
+      <div class="faq-a"><p>Não. Você só usa o WhatsApp (que já tem) e acessa o dashboard pelo navegador quando quiser ver os relatórios. Nada pra baixar, nada pra instalar.</p></div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Meus dados financeiros estão seguros?</div>
+      <div class="faq-a"><p>Sim. Sua senha é criptografada (nem nós temos acesso à senha em texto), as conexões são HTTPS, e seus dados são guardados em ambiente protegido. Não vendemos seus dados, não compartilhamos com terceiros para marketing. Veja a <a href="/privacidade.html">Política de Privacidade</a>.</p></div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">A IA do WhatsApp pode errar?</div>
+      <div class="faq-a"><p>Pode, sim — qualquer IA pode. Por isso o dashboard tem edição completa: clica na transação e você corrige valor, descrição, categoria ou data em segundos. Conferir leva 30 segundos por semana.</p></div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Qual é a diferença pro Pro?</div>
+      <div class="faq-a"><p>O plano <b>Pro</b> adiciona: registro por áudio no WhatsApp (manda um áudio de 10s em vez de digitar), lista de compras inteligente, análise mensal por categoria e histórico ilimitado. Vale R$ 10 a mais por mês.</p></div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Quem cobra a mensalidade?</div>
+      <div class="faq-a"><p>O pagamento é processado pelo <b>Mercado Pago</b> com cobrança mensal recorrente. Nós não armazenamos dados de cartão — fica tudo direto com o MP, certificação PCI.</p></div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final">
+    <h2>Para de adiar.<br>Comece <em>esta semana</em>.</h2>
+    <p>Em 1 minuto você está cadastrado, com WhatsApp ativo. Em 7 dias, já vai saber pra onde o dinheiro foi indo.</p>
+    <a href="#planos" class="hero-cta">Quero assinar agora →</a>
+    <div class="cta-trust">
+      <span>✓ Cancela quando quiser</span>
+      <span>✓ Garantia de 7 dias</span>
+      <span>✓ Sem fidelidade</span>
     </div>
   </section>
 
