@@ -1624,7 +1624,44 @@ function calcularEDesenharPrevisibilidade() {
   // ----- Totais -----
   const totalRenda = rendasAtivas.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
   const totalFixos = fixosAtivos.reduce((s, f) => s + (parseFloat(f.valor) || 0), 0);
-  const orcamentoVariavel = totalRenda - totalFixos;
+
+  // ----- Saldo do ciclo ANTERIOR (carrega pro ciclo atual) -----
+  // Ciclo anterior = mesmo tamanho do atual, mas deslocado pra trás
+  // Início anterior = cicloInicio - 1 dia - (dias_ciclo_atual) + 1
+  // De forma robusta: cicloAnteriorFim = um dia antes de cicloInicio
+  //                   cicloAnteriorInicio = depende da âncora (mesmo dia_recebimento no mês anterior)
+  const cicloAnteriorFim = new Date(cicloInicio.getTime() - msPorDia);
+  cicloAnteriorFim.setHours(0, 0, 0, 0);
+  let cicloAnteriorInicio;
+  if (semRenda) {
+    // Mês civil anterior
+    cicloAnteriorInicio = new Date(cicloInicio.getFullYear(), cicloInicio.getMonth() - 1, 1);
+  } else {
+    // Mesmo dia_recebimento, mês anterior
+    cicloAnteriorInicio = new Date(cicloInicio.getFullYear(), cicloInicio.getMonth() - 1, cicloInicio.getDate());
+  }
+  cicloAnteriorInicio.setHours(0, 0, 0, 0);
+
+  // Despesas + rendas do ciclo anterior
+  const despesasAnt = (dadosCache12M.despesas || []).filter(g => {
+    const dt = parseDataBR(g.data);
+    if (!dt) return false;
+    dt.setHours(0, 0, 0, 0);
+    return dt >= cicloAnteriorInicio && dt <= cicloAnteriorFim;
+  });
+  const rendasAnt = (dadosCache12M.rendas || []).filter(r => {
+    const dt = parseDataBR(r.data);
+    if (!dt) return false;
+    dt.setHours(0, 0, 0, 0);
+    return dt >= cicloAnteriorInicio && dt <= cicloAnteriorFim;
+  });
+  const totalDespAnt = despesasAnt.reduce((s, g) => s + (parseFloat(g.valor) || 0), 0);
+  const totalRendaAnt = rendasAnt.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+  // Saldo: o que recebeu menos o que gastou. Positivo = sobrou. Negativo = furou.
+  const heranca = totalRendaAnt - totalDespAnt;
+
+  // ----- Orçamento do ciclo atual = (renda - fixos) + herança do anterior -----
+  const orcamentoVariavel = totalRenda - totalFixos + heranca;
 
   // ----- Cota BASE (igual para todos os dias do ciclo, calculada uma vez) -----
   const cotaBase = totalDiasCiclo > 0 ? orcamentoVariavel / totalDiasCiclo : 0;
@@ -1674,7 +1711,7 @@ function calcularEDesenharPrevisibilidade() {
     elSub.textContent = `${diasRestantes} dias restantes · cota base R$ ${cotaBase.toFixed(2).replace('.',',')}`;
   }
 
-  document.getElementById('prevRenda').textContent = fmt(totalRenda);
+  document.getElementById('prevRenda').textContent = fmt(totalRenda + heranca);
   document.getElementById('prevRendaSub').textContent = rendasAtivas.length === 0 ? 'Não cadastrada' : `${rendasAtivas.length} ${rendasAtivas.length === 1 ? 'fonte' : 'fontes'}`;
   document.getElementById('prevFixos').textContent = fmt(totalFixos);
   document.getElementById('prevFixosSub').textContent = `${fixosAtivos.length} ${fixosAtivos.length === 1 ? 'gasto' : 'gastos'}`;
